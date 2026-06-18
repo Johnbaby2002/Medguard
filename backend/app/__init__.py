@@ -1,0 +1,1 @@
+"""MedGuard FastAPI backend."""

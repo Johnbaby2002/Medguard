@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MedGuard Mock Frontend</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">MedGuard</p>
+        <h1>Backend Feature Tester</h1>
+      </div>
+      <div class="server">
+        <label for="apiBase">API</label>
+        <input id="apiBase" value="http://127.0.0.1:8000/api/v1" />
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel auth-panel">
+        <h2>Account</h2>
+        <div class="grid two">
+          <label>
+            Email
+            <input id="email" type="email" value="patient@example.com" />
+          </label>
+          <label>
+            Password
+            <input id="password" type="password" value="StrongPassword123" />
+          </label>
+          <label>
+            Full name
+            <input id="fullName" value="Alex Patient" />
+          </label>
+          <label>
+            Role
+            <select id="role">
+              <option value="patient">patient</option>
+              <option value="caregiver">caregiver</option>
+              <option value="clinician">clinician</option>
+            </select>
+          </label>
+        </div>
+        <div class="actions">
+          <button id="registerBtn">Register</button>
+          <button id="loginBtn">Login</button>
+          <button id="meBtn">Load Me</button>
+        </div>
+        <p id="authState" class="status">No token yet</p>
+      </section>
+
+      <section class="panel">
+        <h2>Dashboard</h2>
+        <div class="actions">
+          <button id="dashboardBtn">Refresh Dashboard</button>
+        </div>
+        <div id="dashboardCards" class="metrics"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Medication</h2>
+        <div class="grid three">
+          <label>
+            Name
+            <input id="medName" value="Warfarin" />
+          </label>
+          <label>
+            Form
+            <input id="medForm" value="tablet" />
+          </label>
+          <label>
+            Dosage
+            <input id="medStrength" value="5mg" />
+          </label>
+          <label class="wide">
+            Active ingredient
+            <input id="medIngredients" value="warfarin" />
+          </label>
+          <label class="wide">
+            Frequency
+            <input id="medFrequency" value="once daily" />
+          </label>
+          <label class="wide">
+            Notes
+            <input id="medInstructions" value="Take once daily in the evening" />
+          </label>
+        </div>
+        <div class="actions">
+          <button id="addMedBtn">Add Medication</button>
+          <button id="listMedsBtn">List Medications</button>
+        </div>
+        <div id="medList" class="list"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Reminders & Doses</h2>
+        <div class="grid three">
+          <label>
+            Medication ID
+            <input id="selectedMedicationId" placeholder="Auto-filled after add/list" />
+          </label>
+          <label>
+            Time
+            <input id="reminderTime" value="08:30" />
+          </label>
+          <label>
+            Dose
+            <input id="doseAmount" value="1 tablet" />
+          </label>
+          <label>
+            Status
+            <select id="doseStatus">
+              <option value="taken">taken</option>
+              <option value="missed">missed</option>
+              <option value="skipped">skipped</option>
+            </select>
+          </label>
+        </div>
+        <div class="actions">
+          <button id="addReminderBtn">Add Reminder</button>
+          <button id="listRemindersBtn">List Reminders</button>
+          <button id="logDoseBtn">Log Dose</button>
+          <button id="listDosesBtn">List Dose Logs</button>
+        </div>
+        <div id="reminderList" class="list"></div>
+        <div id="doseList" class="list"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Safety Check</h2>
+        <div class="actions">
+          <button id="createSafetyBtn">Create Safety Check</button>
+          <button id="listSafetyBtn">List Safety Checks</button>
+        </div>
+        <p class="hint">Run the mock AI pipeline to turn pending checks into fake results.</p>
+        <div id="safetyList" class="list"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Reports & Caregivers</h2>
+        <div class="grid two">
+          <label>
+            Report title
+            <input id="reportTitle" value="Medication Report for GP Visit" />
+          </label>
+          <label>
+            Caregiver email
+            <input id="caregiverEmail" type="email" value="caregiver@example.com" />
+          </label>
+        </div>
+        <div class="actions">
+          <button id="createReportBtn">Create Doctor Report</button>
+          <button id="listReportsBtn">List Reports</button>
+          <button id="shareBtn">Share With Caregiver</button>
+          <button id="listCaregiversBtn">List Caregivers</button>
+        </div>
+        <div id="reportList" class="list"></div>
+        <div id="caregiverList" class="list"></div>
+      </section>
+
+      <section class="panel output-panel">
+        <h2>API Output</h2>
+        <pre id="output">Ready.</pre>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
