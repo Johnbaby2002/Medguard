@@ -1,13 +1,14 @@
 # MedGuard Demo Seed
 
-Small helper to create demo users and data for testing the backend, mock frontend, and mock AI pipeline.
+This helper creates generic users and sample data for testing the backend, mock frontend, and safety engine.
 
 ## Run
 
-Start backend first, then:
+Start the backend first. Then, from the repository root:
 
 ```powershell
-cd "C:\Users\johnn\OneDrive\Documents\New project\demo-seed"
+cd demo-seed
+pip install -r requirements.txt
 python seed_demo.py
 ```
 
@@ -16,7 +17,9 @@ It creates:
 - `patient@example.com` / `StrongPassword123`
 - `caregiver@example.com` / `StrongPassword123`
 - Two medications
-- One reminder
-- One dose log
-- One pending safety check
+- One supplement
+- One reminder and taken-dose log
+- One safety-check result
+- One caregiver permission
 
+These credentials are for local demonstration only.

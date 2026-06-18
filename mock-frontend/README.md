@@ -1,21 +1,20 @@
 # MedGuard Mock Frontend
 
-Static test UI for checking the backend features. This is not the real frontend; it is only a working mock so teammates can exercise the API.
+This lightweight static interface is provided for exercising the MedGuard API. It is a testing and demonstration client, not the production frontend.
 
 ## Run
 
 Start the backend first:
 
 ```powershell
-cd "C:\Users\johnn\OneDrive\Documents\New project\backend"
-docker compose up -d
-uvicorn app.main:app --reload
+cd backend
+.\start-local-sqlite.ps1
 ```
 
-Then start this mock frontend:
+In another terminal, from the repository root:
 
 ```powershell
-cd "C:\Users\johnn\OneDrive\Documents\New project\mock-frontend"
+cd mock-frontend
 python -m http.server 3000
 ```
 
@@ -25,15 +24,15 @@ Open:
 http://127.0.0.1:3000
 ```
 
-## What It Tests
+If the backend selected a different port, update the API URL field at the top of the page.
 
-- Register and login
-- Profile loading
-- Dashboard stats
+## Features Covered
+
+- Registration and login
+- Dashboard summary
 - Medication creation
 - Reminder creation
-- Dose logging
-- Safety-check creation
-- Doctor report creation
-- Caregiver sharing
-
+- Dose status
+- Safety checks
+- Medication reports
+- Caregiver access

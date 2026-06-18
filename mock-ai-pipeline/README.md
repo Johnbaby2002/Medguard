@@ -1,35 +1,29 @@
-# MedGuard Mock AI Pipeline
+# MedGuard Safety Pipeline Trigger
 
-This is a fake/rule-based pipeline for testing backend integration. It does not perform real medical analysis.
+This helper logs in and triggers the backend's rule-based safety engine. The interaction analysis itself is implemented in the FastAPI backend.
 
-The script logs in as a user, reads that user's pending safety checks, and writes mock results back to the backend.
+It is intended only for integration testing and demonstrations.
 
 ## Run Once
 
+Start and seed the backend first. Then, from the repository root:
+
 ```powershell
-cd "C:\Users\johnn\OneDrive\Documents\New project\mock-ai-pipeline"
+cd mock-ai-pipeline
+pip install -r requirements.txt
 python mock_ai_pipeline.py --email patient@example.com --password StrongPassword123
 ```
 
-## Poll Continuously
+## Run Continuously
 
 ```powershell
 python mock_ai_pipeline.py --email patient@example.com --password StrongPassword123 --poll
 ```
 
-Optional backend URL:
+## Use Another Backend URL
 
 ```powershell
-python mock_ai_pipeline.py --base-url http://127.0.0.1:8000/api/v1 --email patient@example.com --password StrongPassword123
+python mock_ai_pipeline.py --base-url http://127.0.0.1:8001/api/v1 --email patient@example.com --password StrongPassword123
 ```
 
-## Mock Rules
-
-The fake result flags a higher risk when medication names or ingredients contain examples such as:
-
-- warfarin + ibuprofen
-- sleeping pill + alcohol
-- grapefruit
-- duplicate active ingredients
-
-Again, this is only for demo/testing.
+Safety results are informational and are not medical advice.

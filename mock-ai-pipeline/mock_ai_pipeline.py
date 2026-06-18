@@ -28,13 +28,13 @@ def login(base_url: str, email: str, password: str) -> str:
     except ConnectionError:
         print(f"Could not connect to the backend at {base_url}.")
         print("Start the backend first:")
-        print(r'cd "C:\Users\johnn\OneDrive\Documents\New project\backend"')
+        print("cd backend")
         print(r".\start-local-sqlite.ps1")
         raise SystemExit(1)
     except HTTPError as exc:
         if exc.response.status_code == 401:
             print("Login failed. Create demo users first:")
-            print(r'cd "C:\Users\johnn\OneDrive\Documents\New project\demo-seed"')
+            print("cd demo-seed")
             print("python seed_demo.py")
             raise SystemExit(1)
         print(f"Backend returned {exc.response.status_code} for {exc.response.url}.")

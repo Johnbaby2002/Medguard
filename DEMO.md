@@ -1,85 +1,86 @@
 # MedGuard Demo Guide
 
-This project now has three testable parts:
+Run all commands from the repository root unless a section says otherwise.
 
-- `backend`: real FastAPI + PostgreSQL backend
-- `mock-frontend`: simple static UI for testing backend features
-- `mock-ai-pipeline`: fake safety-check worker for demo purposes
+## 1. Start the Backend
 
-## 1. Start Backend And Database
-
-Easiest option, no Docker needed:
+The easiest option uses SQLite and does not require Docker:
 
 ```powershell
-cd "C:\Users\johnn\OneDrive\Documents\New project\backend"
+cd backend
 .\start-local-sqlite.ps1
 ```
 
-PostgreSQL Docker option:
+Keep this terminal running. The script prints the API and Swagger documentation URLs.
+
+For PostgreSQL through Docker Desktop:
 
 ```powershell
-cd "C:\Users\johnn\OneDrive\Documents\New project\backend"
+cd backend
 .\start-postgres-docker.ps1
 ```
 
-Backend docs:
+If the default port is occupied, the start script automatically selects the next available port.
 
-```text
-http://127.0.0.1:8000/docs
-```
-
-If `8000` is busy, the start script automatically tries `8001`, `8002`, and so on. Use the URL printed by the script.
-
-To see what is using the common backend ports:
+Useful backend helpers:
 
 ```powershell
-cd "C:\Users\johnn\OneDrive\Documents\New project\backend"
 .\show-medguard-ports.ps1
+.\stop-medguard-backends.ps1
 ```
 
-To stop old MedGuard backend processes:
+Return to the repository root before continuing:
 
 ```powershell
-.\stop-medguard-backends.ps1
+cd ..
 ```
 
 ## 2. Seed Demo Data
 
-Open a second terminal while the backend is still running:
+Open a second terminal in the repository root:
 
 ```powershell
-cd "C:\Users\johnn\OneDrive\Documents\New project\demo-seed"
+cd demo-seed
 pip install -r requirements.txt
 python seed_demo.py
 ```
 
-Demo accounts:
+The script creates generic demonstration accounts:
 
 ```text
 patient@example.com / StrongPassword123
 caregiver@example.com / StrongPassword123
 ```
 
-## 3. Run Mock AI Pipeline
-
-Process pending safety checks once:
+If the backend selected a port other than `8000`, set the API URL first:
 
 ```powershell
-cd "C:\Users\johnn\OneDrive\Documents\New project\mock-ai-pipeline"
+$env:MEDGUARD_API_BASE_URL="http://127.0.0.1:8001/api/v1"
+python seed_demo.py
+```
+
+## 3. Trigger the Safety Engine
+
+Open another terminal in the repository root:
+
+```powershell
+cd mock-ai-pipeline
 pip install -r requirements.txt
 python mock_ai_pipeline.py --email patient@example.com --password StrongPassword123
 ```
 
-Or keep polling:
+To run repeatedly:
 
 ```powershell
 python mock_ai_pipeline.py --email patient@example.com --password StrongPassword123 --poll
 ```
 
-## 4. Run Mock Frontend
+## 4. Start the Mock Frontend
+
+Open another terminal in the repository root:
 
 ```powershell
-cd "C:\Users\johnn\OneDrive\Documents\New project\mock-frontend"
+cd mock-frontend
 python -m http.server 3000
 ```
 
@@ -89,4 +90,4 @@ Open:
 http://127.0.0.1:3000
 ```
 
-Use the patient account above, then test medications, reminders, dose logs, safety checks, reports, and caregiver sharing.
+Log in with the generic patient account and test medications, supplements, reminders, safety checks, reports, and caregiver access.

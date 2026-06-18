@@ -108,7 +108,7 @@ def main() -> None:
     except ConnectionError:
         print("Could not connect to the backend at http://127.0.0.1:8000.")
         print("Start the backend first. Easiest local option:")
-        print(r'cd "C:\Users\johnn\OneDrive\Documents\New project\backend"')
+        print("cd backend")
         print(r".\start-local-sqlite.ps1")
         raise SystemExit(1)
     except HTTPError as exc:
@@ -118,7 +118,7 @@ def main() -> None:
         print(response.text)
         print("")
         print("If this happened during register/login, restart the backend after reinstalling requirements:")
-        print(r'cd "C:\Users\johnn\OneDrive\Documents\New project\backend"')
+        print("cd backend")
         print(r".\start-local-sqlite.ps1")
         raise SystemExit(1)
 
