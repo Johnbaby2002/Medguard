@@ -8,6 +8,28 @@ The system is medically cautious. It does not diagnose disease and does not repl
 This is not medical advice. Consult a doctor or pharmacist.
 ```
 
+## Key Features
+
+- Medication management with manual entry and future barcode scanning support
+- AI-powered medication safety check integration point
+- Drug-drug, drug-food, and drug-supplement interaction detection
+- Smart medication reminders and missed-dose tracking
+- Personalized health profile for more accurate risk assessment
+- Personalized medication risk score
+- Plain-language explanations of interaction risks
+- Doctor-ready medication reports
+- Caregiver access and shared medication management
+- Medication history and adherence tracking
+
+## Future Roadmap
+
+- OCR prescription scanning
+- Wearable and EHR integration
+- Predictive AI for high-risk patients
+- Multi-language support
+- Emergency medication card
+- Pharmacy and insurance integration for B2B use cases
+
 ## Repository Structure
 
 ```text
