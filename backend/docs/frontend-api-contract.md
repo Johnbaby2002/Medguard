@@ -93,6 +93,49 @@ Requests accept backend-style `snake_case` and common frontend-style `camelCase`
 
 `DELETE /medications/{id}`
 
+`GET /medications/history`
+
+Returns dose/adherence logs and summary:
+
+```json
+{
+  "logs": [],
+  "adherence_summary": {
+    "total_logs": 0,
+    "taken": 0,
+    "missed": 0,
+    "adherence_rate_percent": null
+  }
+}
+```
+
+## Scan Intake
+
+`POST /scans/barcode`
+
+```json
+{
+  "barcode": "0123456789012",
+  "productName": "Ibuprofen",
+  "activeIngredient": "ibuprofen",
+  "dosage": "200mg",
+  "notes": "Optional package notes"
+}
+```
+
+`POST /scans/prescription-ocr`
+
+```json
+{
+  "ocrText": "Amoxicillin\n500mg capsule",
+  "imageReference": "optional-file-or-storage-reference"
+}
+```
+
+`GET /scans`
+
+Scan endpoints return medication drafts for review. The frontend should let the user confirm fields before calling `POST /medications`.
+
 ## Supplements
 
 `POST /supplements`
@@ -143,6 +186,36 @@ Returns:
 
 `GET /interactions/history`
 
+## AI Review Handoff
+
+`POST /ai/safety-checks`
+
+```json
+{
+  "request_source": "frontend"
+}
+```
+
+`GET /ai/safety-checks/pending`
+
+`GET /ai/safety-checks/{id}`
+
+`PUT /ai/safety-checks/{id}/result`
+
+```json
+{
+  "status": "completed",
+  "aiResult": {
+    "summary": "Plain-language AI review summary.",
+    "warnings": [],
+    "recommendedActions": [],
+    "disclaimer": "This is not medical advice. Consult a doctor or pharmacist."
+  }
+}
+```
+
+The backend stores the AI result but does not implement the AI pipeline.
+
 ## Reminders
 
 `POST /reminders`
@@ -170,6 +243,10 @@ Returns:
 
 `GET /reports/medication-summary`
 
+`GET /emergency-card`
+
+Returns a compact emergency medication card with patient summary, allergies, current medications, supplements, and high-priority warnings.
+
 ## Caregiver
 
 `POST /caregiver/invite`
@@ -186,3 +263,19 @@ Returns:
 `GET /caregiver/patients`
 
 `GET /caregiver/patients/{id}/medications`
+
+## Integrations And Languages
+
+`POST /integrations`
+
+```json
+{
+  "integrationType": "wearable",
+  "providerName": "Starter Device",
+  "externalReference": "optional-reference"
+}
+```
+
+`GET /integrations`
+
+`GET /localization/languages`

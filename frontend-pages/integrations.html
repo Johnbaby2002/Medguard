@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Integrations</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="emergency.html">Emergency Card</a>
+        <a class="active" href="integrations.html">Integrations</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar"><h1>Future Integrations</h1></div>
+      <section class="grid two">
+        <article class="card">
+          <h2>Request integration</h2>
+          <form data-endpoint="POST /integrations">
+            <label>Type
+              <select name="integrationType">
+                <option value="wearable">wearable</option>
+                <option value="ehr">ehr</option>
+                <option value="pharmacy">pharmacy</option>
+                <option value="insurance">insurance</option>
+              </select>
+            </label>
+            <label>Provider<input name="providerName"></label>
+            <label>External reference<input name="externalReference"></label>
+            <button type="button">Save starter record</button>
+          </form>
+        </article>
+        <article class="card">
+          <h2>Language support</h2>
+          <table class="table" data-endpoint="GET /localization/languages">
+            <thead><tr><th>Code</th><th>Name</th><th>Status</th></tr></thead>
+            <tbody><tr><td colspan="3" class="muted">Render supported and planned languages.</td></tr></tbody>
+          </table>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

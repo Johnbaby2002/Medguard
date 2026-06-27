@@ -3,7 +3,19 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 
-from app.models import InteractionType, MedicationForm, ReminderStatus, Severity, Sex, UserRole
+from app.models import (
+    AIReviewStatus,
+    IntegrationStatus,
+    IntegrationType,
+    InteractionType,
+    MedicationForm,
+    ReminderStatus,
+    ScanStatus,
+    ScanType,
+    Severity,
+    Sex,
+    UserRole,
+)
 
 MEDICAL_DISCLAIMER = "This is not medical advice. Consult a doctor or pharmacist."
 
@@ -372,6 +384,11 @@ class MedicationLogOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class MedicationHistoryResponse(BaseModel):
+    logs: list[MedicationLogOut]
+    adherence_summary: dict[str, Any]
+
+
 class MedicationSummaryReport(BaseModel):
     user_profile_summary: dict[str, Any]
     current_medications: list[MedicationOut]
@@ -381,6 +398,145 @@ class MedicationSummaryReport(BaseModel):
     missed_doses: list[MedicationLogOut]
     doctor_pharmacist_notes: list[str]
     disclaimer: str = MEDICAL_DISCLAIMER
+
+
+class BarcodeScanRequest(BaseModel):
+    barcode: str = Field(min_length=3, max_length=100)
+    product_name: str | None = None
+    active_ingredient: str | None = None
+    dosage: str | None = None
+    notes: str | None = None
+
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(data, {"product_name": ("productName",), "active_ingredient": ("activeIngredient",)})
+
+
+class PrescriptionOCRDraftRequest(BaseModel):
+    ocr_text: str = Field(min_length=1)
+    image_reference: str | None = None
+
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(data, {"ocr_text": ("ocrText",), "image_reference": ("imageReference",)})
+
+
+class MedicationDraftOut(BaseModel):
+    name: str
+    active_ingredient: str
+    dosage: str
+    form: MedicationForm = MedicationForm.other
+    frequency: str = "confirm with label"
+    medication_category: str | None = None
+    is_prescription: bool = True
+    notes: str | None = None
+
+
+class MedicationScanOut(BaseModel):
+    id: str
+    user_id: str
+    scan_type: ScanType
+    raw_value: str
+    status: ScanStatus
+    confidence: int
+    medication_draft: dict[str, Any]
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AISafetyReviewCreate(BaseModel):
+    request_source: str = "backend"
+
+
+class AISafetyReviewResultUpdate(BaseModel):
+    status: AIReviewStatus = AIReviewStatus.completed
+    ai_result: dict[str, Any] | None = None
+    error_message: str | None = None
+
+    model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(data, {"ai_result": ("aiResult",), "error_message": ("errorMessage",)})
+
+
+class AISafetyReviewOut(BaseModel):
+    id: str
+    user_id: str
+    status: AIReviewStatus
+    request_source: str
+    input_snapshot: dict[str, Any]
+    ai_result: dict[str, Any] | None = None
+    error_message: str | None = None
+    disclaimer: str
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class EmergencyMedicationCard(BaseModel):
+    patient: dict[str, Any]
+    allergies: list[str]
+    known_conditions: list[str]
+    current_medications: list[MedicationOut]
+    supplements: list[SupplementOut]
+    high_priority_warnings: list[InteractionOut]
+    generated_at: datetime
+    disclaimer: str = MEDICAL_DISCLAIMER
+
+
+class IntegrationConnectionCreate(BaseModel):
+    integration_type: IntegrationType
+    provider_name: str | None = None
+    external_reference: str | None = None
+    metadata_json: dict[str, Any] = Field(default_factory=dict)
+    organization_id: str | None = None
+    status: IntegrationStatus = IntegrationStatus.requested
+
+    model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(
+            data,
+            {
+                "integration_type": ("integrationType",),
+                "provider_name": ("providerName",),
+                "external_reference": ("externalReference",),
+                "metadata_json": ("metadata", "metadataJson"),
+                "organization_id": ("organizationId",),
+            },
+        )
+
+
+class IntegrationConnectionOut(BaseModel):
+    id: str
+    user_id: str | None = None
+    organization_id: str | None = None
+    integration_type: IntegrationType
+    status: IntegrationStatus
+    provider_name: str | None = None
+    external_reference: str | None = None
+    metadata_json: dict[str, Any]
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class SupportedLanguageOut(BaseModel):
+    code: str
+    name: str
+    status: str
 
 
 class CaregiverInvite(BaseModel):

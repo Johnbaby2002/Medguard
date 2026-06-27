@@ -25,10 +25,14 @@ Recommended frontend routes:
 - `/auth.html`
 - `/profile.html`
 - `/medications.html`
+- `/scans.html`
 - `/supplements.html`
 - `/safety.html`
+- `/ai-review.html`
 - `/reminders.html`
 - `/reports.html`
+- `/emergency.html`
 - `/caregiver.html`
+- `/integrations.html`
 
 API details are in `api-map.json` and `../backend/docs/frontend-api-contract.md`.

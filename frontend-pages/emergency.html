@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Emergency Card</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="reports.html">Reports</a>
+        <a class="active" href="emergency.html">Emergency Card</a>
+        <a href="caregiver.html">Caregiver</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar">
+        <h1>Emergency Medication Card</h1>
+        <button type="button" data-endpoint="GET /emergency-card">Load card</button>
+      </div>
+      <section class="grid two">
+        <article class="card">
+          <h2>Patient and allergies</h2>
+          <p class="muted">Render patient, known conditions, and allergies.</p>
+        </article>
+        <article class="card warning">
+          <h2>High-priority warnings</h2>
+          <p class="muted">Render high and critical safety warnings.</p>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Scan Intake</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="medications.html">Medications</a>
+        <a class="active" href="scans.html">Scan Intake</a>
+        <a href="safety.html">Safety</a>
+        <a href="emergency.html">Emergency Card</a>
+        <a href="integrations.html">Integrations</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar"><h1>Scan Intake</h1></div>
+      <section class="grid two">
+        <article class="card">
+          <h2>Barcode draft</h2>
+          <form data-endpoint="POST /scans/barcode">
+            <label>Barcode<input name="barcode"></label>
+            <label>Product name<input name="productName"></label>
+            <label>Active ingredient<input name="activeIngredient"></label>
+            <label>Dosage<input name="dosage"></label>
+            <button type="button">Create draft</button>
+          </form>
+        </article>
+        <article class="card">
+          <h2>OCR draft</h2>
+          <form data-endpoint="POST /scans/prescription-ocr">
+            <label>OCR text<textarea name="ocrText"></textarea></label>
+            <label>Image reference<input name="imageReference"></label>
+            <button type="button">Create draft</button>
+          </form>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

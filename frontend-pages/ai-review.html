@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard AI Review Handoff</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="safety.html">Safety</a>
+        <a class="active" href="ai-review.html">AI Review</a>
+        <a href="reports.html">Reports</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar">
+        <h1>AI Review Handoff</h1>
+        <button type="button" data-endpoint="POST /ai/safety-checks">Create review</button>
+      </div>
+      <section class="grid two">
+        <article class="card">
+          <h2>Pending reviews</h2>
+          <table class="table" data-endpoint="GET /ai/safety-checks/pending">
+            <thead><tr><th>ID</th><th>Status</th><th>Created</th></tr></thead>
+            <tbody><tr><td colspan="3" class="muted">Render pending AI review jobs.</td></tr></tbody>
+          </table>
+        </article>
+        <article class="card">
+          <h2>AI result payload</h2>
+          <form data-endpoint="PUT /ai/safety-checks/{id}/result">
+            <label>Review ID<input name="reviewId"></label>
+            <label>Status
+              <select name="status">
+                <option value="completed">completed</option>
+                <option value="failed">failed</option>
+              </select>
+            </label>
+            <label>AI result JSON<textarea name="aiResult"></textarea></label>
+            <button type="button">Submit result</button>
+          </form>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

@@ -141,6 +141,80 @@ def test_frontend_style_medication_and_supplement_payloads(client: TestClient) -
     assert detail.json()["active_ingredient_category"] == "creatine monohydrate"
 
 
+def test_scan_ai_history_emergency_and_integration_starters(client: TestClient) -> None:
+    token = register(client, "features@example.com")["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    medication = client.post(
+        "/medications",
+        headers=headers,
+        json={
+            "name": "Warfarin",
+            "activeIngredient": "warfarin",
+            "dosage": "5mg",
+            "form": "tablet",
+            "frequency": "daily",
+            "medicationCategory": "blood thinner",
+        },
+    )
+    assert medication.status_code == 201
+
+    barcode = client.post(
+        "/scans/barcode",
+        headers=headers,
+        json={
+            "barcode": "0123456789012",
+            "productName": "Ibuprofen",
+            "activeIngredient": "ibuprofen",
+            "dosage": "200mg",
+        },
+    )
+    assert barcode.status_code == 201
+    assert barcode.json()["medication_draft"]["name"] == "Ibuprofen"
+
+    ocr = client.post(
+        "/scans/prescription-ocr",
+        headers=headers,
+        json={"ocrText": "Amoxicillin\n500mg capsule"},
+    )
+    assert ocr.status_code == 201
+    assert ocr.json()["scan_type"] == "prescription_ocr"
+
+    ai_review = client.post("/ai/safety-checks", headers=headers, json={"request_source": "test"})
+    assert ai_review.status_code == 201
+    review_id = ai_review.json()["id"]
+    assert ai_review.json()["status"] == "pending"
+    assert "rule_based_safety_result" in ai_review.json()["input_snapshot"]
+
+    ai_result = client.put(
+        f"/ai/safety-checks/{review_id}/result",
+        headers=headers,
+        json={"status": "completed", "aiResult": {"summary": "No extra AI warning in test."}},
+    )
+    assert ai_result.status_code == 200
+    assert ai_result.json()["status"] == "completed"
+
+    history = client.get("/medications/history", headers=headers)
+    assert history.status_code == 200
+    assert "adherence_rate_percent" in history.json()["adherence_summary"]
+
+    emergency = client.get("/emergency-card", headers=headers)
+    assert emergency.status_code == 200
+    assert emergency.json()["patient"]["email"] == "features@example.com"
+
+    integration = client.post(
+        "/integrations",
+        headers=headers,
+        json={"integrationType": "wearable", "providerName": "Starter Device"},
+    )
+    assert integration.status_code == 201
+    assert integration.json()["integration_type"] == "wearable"
+
+    languages = client.get("/localization/languages", headers=headers)
+    assert languages.status_code == 200
+    assert languages.json()[0]["code"] == "en"
+
+
 def test_reminder_and_adherence_flow(client: TestClient) -> None:
     token = register(client, "reminders@example.com")["access_token"]
     headers = {"Authorization": f"Bearer {token}"}

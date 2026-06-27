@@ -117,6 +117,13 @@ Medications:
 - `GET /medications/{id}`
 - `PUT /medications/{id}`
 - `DELETE /medications/{id}`
+- `GET /medications/history`
+
+Scan intake:
+
+- `POST /scans/barcode`
+- `POST /scans/prescription-ocr`
+- `GET /scans`
 
 Supplements:
 
@@ -131,6 +138,13 @@ Safety:
 - `POST /safety-check`
 - `GET /interactions/history`
 
+AI handoff:
+
+- `POST /ai/safety-checks`
+- `GET /ai/safety-checks/pending`
+- `GET /ai/safety-checks/{id}`
+- `PUT /ai/safety-checks/{id}/result`
+
 Reminders:
 
 - `POST /reminders`
@@ -143,6 +157,7 @@ Reminders:
 Reports:
 
 - `GET /reports/medication-summary`
+- `GET /emergency-card`
 
 Caregiver:
 
@@ -155,6 +170,12 @@ Organizations:
 - `POST /organizations`
 - `GET /organizations`
 - `POST /organizations/{id}/members`
+
+Future integrations:
+
+- `POST /integrations`
+- `GET /integrations`
+- `GET /localization/languages`
 
 Routes are also available under `/api/v1`, for example `/api/v1/medications`.
 

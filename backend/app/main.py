@@ -6,7 +6,22 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import Base, engine
-from app.routers import auth, caregiver, dashboard, medications, organizations, profile, reminders, reports, safety, supplements
+from app.routers import (
+    ai,
+    auth,
+    caregiver,
+    dashboard,
+    emergency,
+    integrations,
+    medications,
+    organizations,
+    profile,
+    reminders,
+    reports,
+    safety,
+    scans,
+    supplements,
+)
 from app.rule_engine.seed_rules import seed_interaction_rules
 
 
@@ -29,7 +44,8 @@ def create_app() -> FastAPI:
         version="0.2.0",
         description=(
             "Backend API for MedGuard. Handles authentication, profiles, medications, "
-            "reminders, dose logs, caregiver sharing, doctor reports, and rule-based medication safety checks."
+            "scan intake, reminders, dose logs, caregiver sharing, doctor reports, AI handoff, "
+            "integration starters, and rule-based medication safety checks."
         ),
         lifespan=lifespan,
     )
@@ -61,12 +77,16 @@ def create_app() -> FastAPI:
         dashboard.router,
         profile.router,
         medications.router,
+        scans.router,
         supplements.router,
         safety.router,
+        ai.router,
         reminders.router,
         reports.router,
+        emergency.router,
         caregiver.router,
         organizations.router,
+        integrations.router,
     ]
     for router in routers:
         app.include_router(router)

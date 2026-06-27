@@ -51,6 +51,9 @@ backend/
 frontend-pages/
   *.html
   api-map.json
+ai-starter/
+  API_CONTRACT.md
+  client_example.py
 ```
 
 ## Backend Database
@@ -136,6 +139,10 @@ These pages are a handoff starter for the frontend team. They show the expected 
 - `GET /medications/{id}`
 - `PUT /medications/{id}`
 - `DELETE /medications/{id}`
+- `GET /medications/history`
+- `POST /scans/barcode`
+- `POST /scans/prescription-ocr`
+- `GET /scans`
 - `POST /supplements`
 - `GET /supplements`
 - `GET /supplements/{id}`
@@ -143,6 +150,10 @@ These pages are a handoff starter for the frontend team. They show the expected 
 - `DELETE /supplements/{id}`
 - `POST /safety-check`
 - `GET /interactions/history`
+- `POST /ai/safety-checks`
+- `GET /ai/safety-checks/pending`
+- `GET /ai/safety-checks/{id}`
+- `PUT /ai/safety-checks/{id}/result`
 - `POST /reminders`
 - `GET /reminders/today`
 - `PUT /reminders/{id}`
@@ -150,9 +161,13 @@ These pages are a handoff starter for the frontend team. They show the expected 
 - `POST /reminders/{id}/taken`
 - `POST /reminders/{id}/missed`
 - `GET /reports/medication-summary`
+- `GET /emergency-card`
 - `POST /caregiver/invite`
 - `GET /caregiver/patients`
 - `GET /caregiver/patients/{id}/medications`
+- `POST /integrations`
+- `GET /integrations`
+- `GET /localization/languages`
 
 All endpoints are also available under `/api/v1`.
 

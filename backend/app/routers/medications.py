@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
 from app.database import get_db
-from app.models import Medication, User
+from app.models import Medication, MedicationLog, ReminderStatus, User
 from app.routers.helpers import get_manageable_medication, get_owned_medication
-from app.schemas import MedicationCreate, MedicationOut, MedicationUpdate
+from app.schemas import MedicationCreate, MedicationHistoryResponse, MedicationOut, MedicationUpdate
 from app.services.audit import log_audit
 
 router = APIRouter(prefix="/medications", tags=["medications"])
@@ -37,6 +37,33 @@ def list_medications(
     db: Annotated[Session, Depends(get_db)],
 ) -> list[Medication]:
     return list(db.scalars(select(Medication).where(Medication.user_id == current_user.id).order_by(Medication.name)))
+
+
+@router.get("/history", response_model=MedicationHistoryResponse)
+def medication_history(
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+) -> MedicationHistoryResponse:
+    logs = list(
+        db.scalars(
+            select(MedicationLog)
+            .where(MedicationLog.user_id == current_user.id)
+            .order_by(MedicationLog.logged_at.desc())
+        )
+    )
+    taken = [log for log in logs if log.status == ReminderStatus.taken]
+    missed = [log for log in logs if log.status == ReminderStatus.missed]
+    total_recorded = len(taken) + len(missed)
+    adherence_rate = round((len(taken) / total_recorded) * 100, 2) if total_recorded else None
+    return MedicationHistoryResponse(
+        logs=logs,
+        adherence_summary={
+            "total_logs": len(logs),
+            "taken": len(taken),
+            "missed": len(missed),
+            "adherence_rate_percent": adherence_rate,
+        },
+    )
 
 
 @router.get("/{medication_id}", response_model=MedicationOut)

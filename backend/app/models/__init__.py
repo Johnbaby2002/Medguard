@@ -70,6 +70,37 @@ class ReminderStatus(str, Enum):
     missed = "missed"
 
 
+class ScanType(str, Enum):
+    barcode = "barcode"
+    prescription_ocr = "prescription_ocr"
+
+
+class ScanStatus(str, Enum):
+    draft = "draft"
+    matched = "matched"
+    needs_review = "needs_review"
+
+
+class AIReviewStatus(str, Enum):
+    pending = "pending"
+    completed = "completed"
+    failed = "failed"
+
+
+class IntegrationType(str, Enum):
+    wearable = "wearable"
+    ehr = "ehr"
+    pharmacy = "pharmacy"
+    insurance = "insurance"
+
+
+class IntegrationStatus(str, Enum):
+    planned = "planned"
+    requested = "requested"
+    connected = "connected"
+    disabled = "disabled"
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -206,6 +237,38 @@ class MedicationLog(Base):
     reminder: Mapped[Reminder | None] = relationship(back_populates="logs")
 
 
+class MedicationScan(Base):
+    __tablename__ = "medication_scans"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+    scan_type: Mapped[ScanType] = mapped_column(SAEnum(ScanType), nullable=False)
+    raw_value: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[ScanStatus] = mapped_column(SAEnum(ScanStatus), default=ScanStatus.needs_review, nullable=False)
+    confidence: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    medication_draft: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+
+
+class AISafetyReview(Base):
+    __tablename__ = "ai_safety_reviews"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+    status: Mapped[AIReviewStatus] = mapped_column(SAEnum(AIReviewStatus), default=AIReviewStatus.pending, nullable=False)
+    request_source: Mapped[str] = mapped_column(String(100), default="backend", nullable=False)
+    input_snapshot: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    ai_result: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    disclaimer: Mapped[str] = mapped_column(
+        Text,
+        default="This is not medical advice. Consult a doctor or pharmacist.",
+        nullable=False,
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False)
+
+
 class CaregiverAccess(Base):
     __tablename__ = "caregiver_access"
     __table_args__ = (UniqueConstraint("patient_id", "caregiver_id", name="uq_patient_caregiver"),)
@@ -236,6 +299,20 @@ class OrganizationMember(Base):
     organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"), index=True, nullable=False)
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
     role: Mapped[UserRole] = mapped_column(SAEnum(UserRole), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+
+
+class IntegrationConnection(Base):
+    __tablename__ = "integration_connections"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
+    user_id: Mapped[str | None] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=True)
+    organization_id: Mapped[str | None] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"), index=True, nullable=True)
+    integration_type: Mapped[IntegrationType] = mapped_column(SAEnum(IntegrationType), nullable=False)
+    status: Mapped[IntegrationStatus] = mapped_column(SAEnum(IntegrationStatus), default=IntegrationStatus.planned, nullable=False)
+    provider_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    external_reference: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    metadata_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
 
 

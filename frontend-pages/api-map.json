@@ -16,7 +16,13 @@
       "list": "GET /medications",
       "detail": "GET /medications/{id}",
       "update": "PUT /medications/{id}",
-      "delete": "DELETE /medications/{id}"
+      "delete": "DELETE /medications/{id}",
+      "history": "GET /medications/history"
+    },
+    "scans": {
+      "barcodeDraft": "POST /scans/barcode",
+      "prescriptionOcrDraft": "POST /scans/prescription-ocr",
+      "list": "GET /scans"
     },
     "supplements": {
       "create": "POST /supplements",
@@ -27,7 +33,11 @@
     },
     "safety": {
       "check": "POST /safety-check",
-      "history": "GET /interactions/history"
+      "history": "GET /interactions/history",
+      "createAiReview": "POST /ai/safety-checks",
+      "pendingAiReviews": "GET /ai/safety-checks/pending",
+      "aiReviewDetail": "GET /ai/safety-checks/{id}",
+      "submitAiResult": "PUT /ai/safety-checks/{id}/result"
     },
     "reminders": {
       "create": "POST /reminders",
@@ -38,12 +48,18 @@
       "missed": "POST /reminders/{id}/missed"
     },
     "reports": {
-      "medicationSummary": "GET /reports/medication-summary"
+      "medicationSummary": "GET /reports/medication-summary",
+      "emergencyCard": "GET /emergency-card"
     },
     "caregiver": {
       "invite": "POST /caregiver/invite",
       "patients": "GET /caregiver/patients",
       "patientMedications": "GET /caregiver/patients/{id}/medications"
+    },
+    "integrations": {
+      "create": "POST /integrations",
+      "list": "GET /integrations",
+      "languages": "GET /localization/languages"
     }
   }
 }
