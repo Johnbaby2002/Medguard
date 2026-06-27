@@ -37,6 +37,15 @@ def list_supplements(
     return list(db.scalars(select(Supplement).where(Supplement.user_id == current_user.id).order_by(Supplement.name)))
 
 
+@router.get("/{supplement_id}", response_model=SupplementOut)
+def get_supplement(
+    supplement_id: str,
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+) -> Supplement:
+    return get_owned_supplement(db, current_user, supplement_id)
+
+
 @router.put("/{supplement_id}", response_model=SupplementOut)
 def update_supplement(
     supplement_id: str,

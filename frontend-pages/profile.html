@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Profile</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="auth.html">Auth</a>
+        <a class="active" href="profile.html">Profile</a>
+        <a href="medications.html">Medications</a>
+        <a href="supplements.html">Supplements</a>
+        <a href="safety.html">Safety</a>
+        <a href="reminders.html">Reminders</a>
+        <a href="reports.html">Reports</a>
+        <a href="caregiver.html">Caregiver</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar"><h1>Health Profile</h1></div>
+      <article class="card">
+        <form data-endpoint="PUT /profile">
+          <section class="grid two">
+            <label>Age<input name="age" type="number" min="0" max="130"></label>
+            <label>Sex
+              <select name="sex">
+                <option value="">Prefer not to say</option>
+                <option value="female">female</option>
+                <option value="male">male</option>
+                <option value="intersex">intersex</option>
+                <option value="other">other</option>
+              </select>
+            </label>
+            <label>Weight<input name="weight" type="number" step="0.1" min="0"></label>
+            <label>Pregnancy status<input name="pregnancyStatus"></label>
+            <label>Alcohol use<input name="alcoholUse"></label>
+            <label>Caffeine/pre-workout use<input name="caffeinePreworkoutUse"></label>
+          </section>
+          <label>Known conditions<textarea name="knownConditions"></textarea></label>
+          <label>Allergies<textarea name="allergies"></textarea></label>
+          <button type="button">Save profile</button>
+        </form>
+      </article>
+    </main>
+  </div>
+</body>
+</html>

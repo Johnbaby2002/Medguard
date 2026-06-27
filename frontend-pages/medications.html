@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Medications</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="auth.html">Auth</a>
+        <a href="profile.html">Profile</a>
+        <a class="active" href="medications.html">Medications</a>
+        <a href="supplements.html">Supplements</a>
+        <a href="safety.html">Safety</a>
+        <a href="reminders.html">Reminders</a>
+        <a href="reports.html">Reports</a>
+        <a href="caregiver.html">Caregiver</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar">
+        <h1>Medications</h1>
+        <span class="badge">CRUD ready</span>
+      </div>
+      <section class="grid two">
+        <article class="card">
+          <h2>Add or edit medication</h2>
+          <form data-endpoint="POST /medications">
+            <label>Name<input name="name" placeholder="Ibuprofen"></label>
+            <label>Active ingredient<input name="activeIngredient" placeholder="ibuprofen"></label>
+            <label>Dosage<input name="dosage" placeholder="200mg"></label>
+            <label>Form
+              <select name="form">
+                <option value="tablet">tablet</option>
+                <option value="capsule">capsule</option>
+                <option value="liquid">liquid</option>
+                <option value="injection">injection</option>
+                <option value="inhaler">inhaler</option>
+                <option value="cream">cream</option>
+                <option value="patch">patch</option>
+                <option value="drops">drops</option>
+                <option value="other">other</option>
+              </select>
+            </label>
+            <label>Frequency<input name="frequency" placeholder="twice daily"></label>
+            <section class="grid two">
+              <label>Start date<input name="startDate" type="date"></label>
+              <label>End date<input name="endDate" type="date"></label>
+            </section>
+            <label>Doctor<input name="prescribingDoctor"></label>
+            <label>Category<input name="medicationCategory" placeholder="nsaid"></label>
+            <label>Prescription
+              <select name="isPrescription">
+                <option value="true">true</option>
+                <option value="false">false</option>
+              </select>
+            </label>
+            <label>Notes<textarea name="notes"></textarea></label>
+            <button type="button">Save medication</button>
+          </form>
+        </article>
+        <article class="card">
+          <h2>Medication table</h2>
+          <table class="table" data-endpoint="GET /medications">
+            <thead><tr><th>Name</th><th>Ingredient</th><th>Dose</th><th>Actions</th></tr></thead>
+            <tbody><tr><td colspan="4" class="muted">Render rows with edit and delete controls.</td></tr></tbody>
+          </table>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

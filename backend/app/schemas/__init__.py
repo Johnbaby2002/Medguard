@@ -12,11 +12,32 @@ def clean_strings(values: list[str]) -> list[str]:
     return [value.strip() for value in values if value and value.strip()]
 
 
+def accept_aliases(data: Any, aliases: dict[str, tuple[str, ...]]) -> Any:
+    if not isinstance(data, dict):
+        return data
+    normalized = dict(data)
+    for field_name, alias_names in aliases.items():
+        if field_name in normalized:
+            continue
+        for alias in alias_names:
+            if alias in normalized:
+                normalized[field_name] = normalized[alias]
+                break
+    return normalized
+
+
 class UserCreate(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=72)
     full_name: str = Field(min_length=1, max_length=255)
     role: UserRole = UserRole.patient
+
+    model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(data, {"full_name": ("fullName",)})
 
 
 class UserLogin(BaseModel):
@@ -50,6 +71,30 @@ class HealthProfileUpsert(BaseModel):
     alcohol_use: str | None = None
     caffeine_preworkout_use: str | None = None
 
+    model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(
+            data,
+            {
+                "known_conditions": ("knownConditions",),
+                "pregnancy_status": ("pregnancyStatus",),
+                "alcohol_use": ("alcoholUse",),
+                "caffeine_preworkout_use": ("caffeinePreworkoutUse", "caffeineUse"),
+            },
+        )
+
+    @field_validator("sex", mode="before")
+    @classmethod
+    def normalize_sex(cls, value: str | Sex | None) -> str | Sex | None:
+        if isinstance(value, str):
+            if not value.strip():
+                return None
+            return value.strip().lower().replace(" ", "_").replace("-", "_")
+        return value
+
     @field_validator("known_conditions", "allergies")
     @classmethod
     def clean_list(cls, value: list[str]) -> list[str]:
@@ -67,7 +112,7 @@ class HealthProfileOut(HealthProfileUpsert):
 
 class MedicationBase(BaseModel):
     name: str = Field(min_length=1, max_length=255)
-    active_ingredient: str = Field(min_length=1, max_length=255)
+    active_ingredient: str = Field(default="", max_length=255)
     dosage: str = Field(min_length=1, max_length=100)
     form: MedicationForm = MedicationForm.other
     frequency: str = Field(min_length=1, max_length=100)
@@ -77,6 +122,32 @@ class MedicationBase(BaseModel):
     notes: str | None = None
     medication_category: str | None = None
     is_prescription: bool = True
+
+    model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(
+            data,
+            {
+                "active_ingredient": ("activeIngredient", "ingredient"),
+                "start_date": ("startDate",),
+                "end_date": ("endDate",),
+                "prescribing_doctor": ("prescribingDoctor", "doctor"),
+                "medication_category": ("medicationCategory", "category"),
+                "is_prescription": ("isPrescription", "prescription"),
+            },
+        )
+
+    @field_validator("form", mode="before")
+    @classmethod
+    def normalize_form(cls, value: str | MedicationForm | None) -> str | MedicationForm:
+        if value is None or value == "":
+            return MedicationForm.other
+        if isinstance(value, str):
+            return value.strip().lower().replace(" ", "_").replace("-", "_")
+        return value
 
     @model_validator(mode="after")
     def validate_date_range(self) -> "MedicationBase":
@@ -102,6 +173,32 @@ class MedicationUpdate(BaseModel):
     medication_category: str | None = None
     is_prescription: bool | None = None
 
+    model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(
+            data,
+            {
+                "active_ingredient": ("activeIngredient", "ingredient"),
+                "start_date": ("startDate",),
+                "end_date": ("endDate",),
+                "prescribing_doctor": ("prescribingDoctor", "doctor"),
+                "medication_category": ("medicationCategory", "category"),
+                "is_prescription": ("isPrescription", "prescription"),
+            },
+        )
+
+    @field_validator("form", mode="before")
+    @classmethod
+    def normalize_form(cls, value: str | MedicationForm | None) -> str | MedicationForm | None:
+        if value is None or value == "":
+            return None
+        if isinstance(value, str):
+            return value.strip().lower().replace(" ", "_").replace("-", "_")
+        return value
+
     @model_validator(mode="after")
     def validate_date_range(self) -> "MedicationUpdate":
         if self.start_date and self.end_date and self.end_date < self.start_date:
@@ -125,6 +222,13 @@ class SupplementCreate(BaseModel):
     frequency: str = Field(min_length=1, max_length=100)
     notes: str | None = None
 
+    model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(data, {"active_ingredient_category": ("activeIngredientCategory", "category")})
+
 
 class SupplementUpdate(BaseModel):
     name: str | None = None
@@ -132,6 +236,13 @@ class SupplementUpdate(BaseModel):
     dose: str | None = None
     frequency: str | None = None
     notes: str | None = None
+
+    model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(data, {"active_ingredient_category": ("activeIngredientCategory", "category")})
 
 
 class SupplementOut(SupplementCreate):
@@ -193,6 +304,13 @@ class ReminderCreate(BaseModel):
     repeat_pattern: str = "daily"
     timezone: str = "Europe/Berlin"
 
+    model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(data, {"medication_id": ("medicationId",), "repeat_pattern": ("repeatPattern",)})
+
     @field_validator("time")
     @classmethod
     def validate_time(cls, value: str) -> str:
@@ -207,6 +325,13 @@ class ReminderUpdate(BaseModel):
     repeat_pattern: str | None = None
     timezone: str | None = None
     enabled: bool | None = None
+
+    model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(data, {"repeat_pattern": ("repeatPattern",)})
 
     @field_validator("time")
     @classmethod
@@ -263,6 +388,20 @@ class CaregiverInvite(BaseModel):
     relationship: str | None = None
     can_manage: bool = False
     missed_dose_alerts: bool = True
+
+    model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(
+            data,
+            {
+                "caregiver_email": ("caregiverEmail",),
+                "can_manage": ("canManage",),
+                "missed_dose_alerts": ("missedDoseAlerts",),
+            },
+        )
 
 
 class CaregiverAccessOut(BaseModel):

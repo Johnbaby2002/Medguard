@@ -1,51 +1,86 @@
 # MedGuard Backend
 
-FastAPI backend for MedGuard. It supports authentication, health profiles, medication and supplement management, a rule-based medication safety engine, reminders, caregiver support, organization-ready access control, audit logging, and doctor-ready JSON reports.
+FastAPI backend for MedGuard. It supports JWT authentication, password hashing, user health profiles, medication CRUD, supplement CRUD, a rule-based interaction engine, reminders, caregiver access, organization-ready roles, audit logging, and doctor-ready JSON reports.
 
-The system is medically cautious: it does not diagnose disease and does not replace doctors. Safety results include: `This is not medical advice. Consult a doctor or pharmacist.`
+MedGuard is a medication safety support tool. It does not diagnose disease or replace clinicians. Safety results include:
 
-## Tech Stack
+```text
+This is not medical advice. Consult a doctor or pharmacist.
+```
+
+## Stack
 
 - FastAPI
 - SQLAlchemy
-- PostgreSQL via `psycopg`
-- SQLite for easy local demos
-- JWT authentication
+- PostgreSQL with `psycopg`
 - Alembic migration scaffold
-- Pytest test suite
+- JWT authentication
+- Pytest
+- Optional SQLite for local tests/demo runs
 
-## Easiest Local Setup
+## Environment
 
-No Docker needed:
+Copy the PostgreSQL example:
 
-```powershell
-cd backend
-.\start-local-sqlite.ps1
+```bash
+cp .env.example .env
 ```
 
-Open the printed docs URL, usually:
+Important values:
 
 ```text
-http://127.0.0.1:8000/docs
+DATABASE_URL=postgresql+psycopg://medguard:medguard@localhost:5432/medguard
+JWT_SECRET_KEY=change-this-in-production
+CORS_ORIGINS=["http://localhost:3000","http://127.0.0.1:3000"]
 ```
 
-If port `8000` is busy, the script automatically tries the next free port.
+For a quick SQLite run, copy `.env.sqlite.example` instead.
 
-## PostgreSQL With Docker
-
-Use this when Docker Desktop is running:
+## Windows Setup
 
 ```powershell
 cd backend
 .\start-postgres-docker.ps1
 ```
 
-## Useful Helpers
+## macOS/Linux Setup
+
+```bash
+cd backend
+chmod +x start-postgres-docker.sh
+./start-postgres-docker.sh
+```
+
+## Manual Setup
+
+macOS/Linux:
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+docker compose up -d
+python dev.py
+```
+
+Windows:
 
 ```powershell
-.\show-medguard-ports.ps1
-.\stop-medguard-backends.ps1
+cd backend
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+docker compose up -d
+.\.venv\Scripts\python.exe dev.py
 ```
+
+Open:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+If port `8000` is busy, `dev.py` automatically tries the next available port.
 
 ## Project Structure
 
@@ -62,7 +97,7 @@ app/
   rule_engine/
 ```
 
-## Key Endpoints
+## CRUD Modules
 
 Auth:
 
@@ -87,6 +122,7 @@ Supplements:
 
 - `POST /supplements`
 - `GET /supplements`
+- `GET /supplements/{id}`
 - `PUT /supplements/{id}`
 - `DELETE /supplements/{id}`
 
@@ -120,78 +156,42 @@ Organizations:
 - `GET /organizations`
 - `POST /organizations/{id}/members`
 
-All routes are also available under `/api/v1`, for example `/api/v1/auth/login`.
+Routes are also available under `/api/v1`, for example `/api/v1/medications`.
 
-## Rule Engine
+## Frontend-Friendly Payloads
 
-Seeded rules cover:
+The backend accepts snake_case and common camelCase request fields. These both work:
 
-- blood thinner + NSAID/painkiller
-- sleeping pill + alcohol
-- anxiety medication + sleeping pill
-- medication + grapefruit
-- duplicate NSAIDs
-- antibiotic + birth control
-- pre-workout/high caffeine + anxiety medication
-- duplicate cold medicine ingredients
-
-## Demo Flow
-
-In terminal 1:
-
-```powershell
-cd backend
-.\start-local-sqlite.ps1
+```json
+{
+  "active_ingredient": "ibuprofen",
+  "medication_category": "nsaid",
+  "is_prescription": false
+}
 ```
 
-In terminal 2:
-
-```powershell
-cd demo-seed
-python seed_demo.py
+```json
+{
+  "activeIngredient": "ibuprofen",
+  "medicationCategory": "nsaid",
+  "isPrescription": false
+}
 ```
 
-In terminal 3:
-
-```powershell
-cd mock-ai-pipeline
-python mock_ai_pipeline.py --email patient@example.com --password StrongPassword123
-```
-
-In terminal 4:
-
-```powershell
-cd mock-frontend
-python -m http.server 3000
-```
-
-Open:
-
-```text
-http://127.0.0.1:3000
-```
-
-Demo login:
-
-```text
-patient@example.com
-StrongPassword123
-```
+Medication `form` values are case-normalized, so `Tablet`, `tablet`, and `TABLET` from a select control are accepted. If `activeIngredient` is empty when creating a medication, the backend stores the medication name as a safe placeholder.
 
 ## Tests
 
-```powershell
+```bash
 cd backend
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-.\.venv\Scripts\python.exe -m pytest
+python -m pip install -r requirements-dev.txt
+python -m pytest
 ```
 
 ## Alembic
 
-Create and apply migrations:
-
-```powershell
+```bash
 cd backend
-.\.venv\Scripts\python.exe -m alembic revision --autogenerate -m "describe change"
-.\.venv\Scripts\python.exe -m alembic upgrade head
+python -m alembic revision --autogenerate -m "describe change"
+python -m alembic upgrade head
 ```

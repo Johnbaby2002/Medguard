@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Safety</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="auth.html">Auth</a>
+        <a href="profile.html">Profile</a>
+        <a href="medications.html">Medications</a>
+        <a href="supplements.html">Supplements</a>
+        <a class="active" href="safety.html">Safety</a>
+        <a href="reminders.html">Reminders</a>
+        <a href="reports.html">Reports</a>
+        <a href="caregiver.html">Caregiver</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar">
+        <h1>Safety Check</h1>
+        <button type="button" data-endpoint="POST /safety-check">Run check</button>
+      </div>
+      <section class="grid two">
+        <article class="card warning">
+          <h2>Risk summary</h2>
+          <p><strong>Total risk score:</strong> <span class="muted">Render score</span></p>
+          <p><strong>Highest severity:</strong> <span class="muted">Render severity</span></p>
+          <p class="muted">This is not medical advice. Consult a doctor or pharmacist.</p>
+        </article>
+        <article class="card">
+          <h2>Recommended actions</h2>
+          <p class="muted">Render backend recommendations here.</p>
+        </article>
+      </section>
+      <article class="card" style="margin-top:16px">
+        <h2>Interaction history</h2>
+        <table class="table" data-endpoint="GET /interactions/history">
+          <thead><tr><th>Date</th><th>Severity</th><th>Score</th><th>Details</th></tr></thead>
+          <tbody><tr><td colspan="4" class="muted">Render saved safety check results.</td></tr></tbody>
+        </table>
+      </article>
+    </main>
+  </div>
+</body>
+</html>

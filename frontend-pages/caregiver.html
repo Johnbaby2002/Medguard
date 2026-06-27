@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Caregiver</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="auth.html">Auth</a>
+        <a href="profile.html">Profile</a>
+        <a href="medications.html">Medications</a>
+        <a href="supplements.html">Supplements</a>
+        <a href="safety.html">Safety</a>
+        <a href="reminders.html">Reminders</a>
+        <a href="reports.html">Reports</a>
+        <a class="active" href="caregiver.html">Caregiver</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar"><h1>Caregiver</h1></div>
+      <section class="grid two">
+        <article class="card">
+          <h2>Invite caregiver</h2>
+          <form data-endpoint="POST /caregiver/invite">
+            <label>Caregiver email<input name="caregiverEmail" type="email"></label>
+            <label>Relationship<input name="relationship" placeholder="parent, spouse, nurse"></label>
+            <label>Can manage
+              <select name="canManage">
+                <option value="false">false</option>
+                <option value="true">true</option>
+              </select>
+            </label>
+            <label>Missed-dose alerts
+              <select name="missedDoseAlerts">
+                <option value="true">true</option>
+                <option value="false">false</option>
+              </select>
+            </label>
+            <button type="button">Send invite</button>
+          </form>
+        </article>
+        <article class="card">
+          <h2>Patient access</h2>
+          <table class="table" data-endpoint="GET /caregiver/patients">
+            <thead><tr><th>Patient</th><th>Role</th><th>Actions</th></tr></thead>
+            <tbody><tr><td colspan="3" class="muted">Render patient rows and medication links.</td></tr></tbody>
+          </table>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "baseUrl": "http://127.0.0.1:8000",
+  "authHeader": "Authorization: Bearer <access_token>",
+  "pages": {
+    "auth": {
+      "register": "POST /auth/register",
+      "login": "POST /auth/login",
+      "me": "GET /auth/me"
+    },
+    "profile": {
+      "get": "GET /profile",
+      "save": "PUT /profile"
+    },
+    "medications": {
+      "create": "POST /medications",
+      "list": "GET /medications",
+      "detail": "GET /medications/{id}",
+      "update": "PUT /medications/{id}",
+      "delete": "DELETE /medications/{id}"
+    },
+    "supplements": {
+      "create": "POST /supplements",
+      "list": "GET /supplements",
+      "detail": "GET /supplements/{id}",
+      "update": "PUT /supplements/{id}",
+      "delete": "DELETE /supplements/{id}"
+    },
+    "safety": {
+      "check": "POST /safety-check",
+      "history": "GET /interactions/history"
+    },
+    "reminders": {
+      "create": "POST /reminders",
+      "today": "GET /reminders/today",
+      "update": "PUT /reminders/{id}",
+      "delete": "DELETE /reminders/{id}",
+      "taken": "POST /reminders/{id}/taken",
+      "missed": "POST /reminders/{id}/missed"
+    },
+    "reports": {
+      "medicationSummary": "GET /reports/medication-summary"
+    },
+    "caregiver": {
+      "invite": "POST /caregiver/invite",
+      "patients": "GET /caregiver/patients",
+      "patientMedications": "GET /caregiver/patients/{id}/medications"
+    }
+  }
+}

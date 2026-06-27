@@ -20,7 +20,9 @@ def create_medication(
     current_user: Annotated[User, Depends(get_current_user)],
     db: Annotated[Session, Depends(get_db)],
 ) -> Medication:
-    medication = Medication(user_id=current_user.id, **payload.model_dump())
+    data = payload.model_dump()
+    data["active_ingredient"] = data["active_ingredient"] or data["name"]
+    medication = Medication(user_id=current_user.id, **data)
     db.add(medication)
     db.flush()
     log_audit(db, current_user, "create_medication", "medication", medication.id)
@@ -54,7 +56,12 @@ def update_medication(
     db: Annotated[Session, Depends(get_db)],
 ) -> Medication:
     medication = get_manageable_medication(db, current_user, medication_id)
-    for field, value in payload.model_dump(exclude_unset=True).items():
+    data = payload.model_dump(exclude_unset=True)
+    if data.get("form") is None:
+        data.pop("form", None)
+    if data.get("active_ingredient") == "":
+        data["active_ingredient"] = data.get("name") or medication.name
+    for field, value in data.items():
         setattr(medication, field, value)
     db.flush()
     log_audit(db, current_user, "update_medication", "medication", medication.id)

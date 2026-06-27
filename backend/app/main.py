@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.core.config import settings
+from app.config import settings
 from app.database import Base, engine
 from app.routers import auth, caregiver, dashboard, medications, organizations, profile, reminders, reports, safety, supplements
 from app.rule_engine.seed_rules import seed_interaction_rules
@@ -29,7 +29,7 @@ def create_app() -> FastAPI:
         version="0.2.0",
         description=(
             "Backend API for MedGuard. Handles authentication, profiles, medications, "
-            "reminders, dose logs, caregiver sharing, doctor reports, and AI safety-check handoff records."
+            "reminders, dose logs, caregiver sharing, doctor reports, and rule-based medication safety checks."
         ),
         lifespan=lifespan,
     )

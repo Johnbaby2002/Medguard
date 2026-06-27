@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.db.base import Base
+from app.database import Base
 from app.database import get_db
 from app.main import app
 from app.rule_engine.seed_rules import seed_interaction_rules

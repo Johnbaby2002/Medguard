@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Supplements</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="auth.html">Auth</a>
+        <a href="profile.html">Profile</a>
+        <a href="medications.html">Medications</a>
+        <a class="active" href="supplements.html">Supplements</a>
+        <a href="safety.html">Safety</a>
+        <a href="reminders.html">Reminders</a>
+        <a href="reports.html">Reports</a>
+        <a href="caregiver.html">Caregiver</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar"><h1>Supplements</h1></div>
+      <section class="grid two">
+        <article class="card">
+          <h2>Add or edit supplement</h2>
+          <form data-endpoint="POST /supplements">
+            <label>Name<input name="name" placeholder="Creatine"></label>
+            <label>Ingredient/category<input name="activeIngredientCategory" placeholder="creatine monohydrate"></label>
+            <label>Dose<input name="dose" placeholder="5g"></label>
+            <label>Frequency<input name="frequency" placeholder="daily"></label>
+            <label>Notes<textarea name="notes"></textarea></label>
+            <button type="button">Save supplement</button>
+          </form>
+        </article>
+        <article class="card">
+          <h2>Supplement table</h2>
+          <table class="table" data-endpoint="GET /supplements">
+            <thead><tr><th>Name</th><th>Category</th><th>Dose</th><th>Actions</th></tr></thead>
+            <tbody><tr><td colspan="4" class="muted">Render rows with edit and delete controls.</td></tr></tbody>
+          </table>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

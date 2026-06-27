@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Reminders</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="auth.html">Auth</a>
+        <a href="profile.html">Profile</a>
+        <a href="medications.html">Medications</a>
+        <a href="supplements.html">Supplements</a>
+        <a href="safety.html">Safety</a>
+        <a class="active" href="reminders.html">Reminders</a>
+        <a href="reports.html">Reports</a>
+        <a href="caregiver.html">Caregiver</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar"><h1>Reminders</h1></div>
+      <section class="grid two">
+        <article class="card">
+          <h2>Create reminder</h2>
+          <form data-endpoint="POST /reminders">
+            <label>Medication ID<input name="medicationId"></label>
+            <label>Time<input name="time" type="time"></label>
+            <label>Repeat pattern<input name="repeatPattern" value="daily"></label>
+            <label>Timezone<input name="timezone" value="Europe/Berlin"></label>
+            <button type="button">Create reminder</button>
+          </form>
+        </article>
+        <article class="card">
+          <h2>Today schedule</h2>
+          <table class="table" data-endpoint="GET /reminders/today">
+            <thead><tr><th>Time</th><th>Medication</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody><tr><td colspan="4" class="muted">Render taken/missed controls.</td></tr></tbody>
+          </table>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

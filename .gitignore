@@ -26,7 +26,19 @@ build/
 .vscode/
 .idea/
 .DS_Store
+__MACOSX/
 Thumbs.db
 
 # Logs
 *.log
+.run-logs/
+
+# Archives and local handoff exports
+*.zip
+*.7z
+*.tar
+*.tar.gz
+
+# Local scratch folders
+tmp/
+output/

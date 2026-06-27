@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "MedGuard Backend"
     environment: str = "local"
-    database_url: str = "sqlite:///./medguard_v2.db"
+    database_url: str = "postgresql+psycopg://medguard:medguard@localhost:5432/medguard"
     jwt_secret_key: str
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 1440

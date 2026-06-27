@@ -100,6 +100,47 @@ def test_auth_profile_medication_supplement_safety_report_flow(client: TestClien
     assert len(report.json()["supplements"]) == 1
 
 
+def test_frontend_style_medication_and_supplement_payloads(client: TestClient) -> None:
+    token = register(client, "frontend@example.com")["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    medication = client.post(
+        "/medications",
+        headers=headers,
+        json={
+            "name": "Vitamin D",
+            "activeIngredient": "",
+            "dosage": "1000 IU",
+            "form": "Tablet",
+            "frequency": "daily",
+            "startDate": "2026-06-27",
+            "medicationCategory": "vitamin",
+            "isPrescription": False,
+        },
+    )
+    assert medication.status_code == 201
+    medication_data = medication.json()
+    assert medication_data["active_ingredient"] == "Vitamin D"
+    assert medication_data["form"] == "tablet"
+    assert medication_data["is_prescription"] is False
+
+    supplement = client.post(
+        "/supplements",
+        headers=headers,
+        json={
+            "name": "Creatine",
+            "activeIngredientCategory": "creatine monohydrate",
+            "dose": "5g",
+            "frequency": "daily",
+        },
+    )
+    assert supplement.status_code == 201
+
+    detail = client.get(f"/supplements/{supplement.json()['id']}", headers=headers)
+    assert detail.status_code == 200
+    assert detail.json()["active_ingredient_category"] == "creatine monohydrate"
+
+
 def test_reminder_and_adherence_flow(client: TestClient) -> None:
     token = register(client, "reminders@example.com")["access_token"]
     headers = {"Authorization": f"Bearer {token}"}

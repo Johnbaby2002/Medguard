@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a class="active" href="index.html">Dashboard</a>
+        <a href="auth.html">Auth</a>
+        <a href="profile.html">Profile</a>
+        <a href="medications.html">Medications</a>
+        <a href="supplements.html">Supplements</a>
+        <a href="safety.html">Safety</a>
+        <a href="reminders.html">Reminders</a>
+        <a href="reports.html">Reports</a>
+        <a href="caregiver.html">Caregiver</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar">
+        <h1>Dashboard</h1>
+        <a class="button" href="medications.html">Add medication</a>
+      </div>
+      <section class="grid three">
+        <article class="card">
+          <h2>Current medications</h2>
+          <div class="metric">0</div>
+          <p class="muted">GET /medications</p>
+        </article>
+        <article class="card">
+          <h2>Today reminders</h2>
+          <div class="metric">0</div>
+          <p class="muted">GET /reminders/today</p>
+        </article>
+        <article class="card warning">
+          <h2>Highest safety risk</h2>
+          <div class="metric">None</div>
+          <p class="muted">POST /safety-check</p>
+        </article>
+      </section>
+      <section class="grid two" style="margin-top:16px">
+        <article class="card">
+          <h2>Medication list preview</h2>
+          <table class="table">
+            <thead><tr><th>Name</th><th>Dose</th><th>Frequency</th><th>Actions</th></tr></thead>
+            <tbody><tr><td colspan="4" class="muted">Render medication rows here.</td></tr></tbody>
+          </table>
+        </article>
+        <article class="card">
+          <h2>Safety actions</h2>
+          <p class="muted">Render recommended actions from the latest safety check.</p>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

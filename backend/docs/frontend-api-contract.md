@@ -18,6 +18,8 @@ Use:
 Authorization: Bearer <access_token>
 ```
 
+Requests accept backend-style `snake_case` and common frontend-style `camelCase` field names.
+
 ## Auth
 
 `POST /auth/register`
@@ -26,7 +28,7 @@ Authorization: Bearer <access_token>
 {
   "email": "patient@example.com",
   "password": "StrongPassword123",
-  "full_name": "Alex Patient",
+  "fullName": "Alex Patient",
   "role": "patient"
 }
 ```
@@ -53,11 +55,11 @@ Authorization: Bearer <access_token>
   "age": 70,
   "sex": "male",
   "weight": 82,
-  "known_conditions": ["atrial fibrillation"],
+  "knownConditions": ["atrial fibrillation"],
   "allergies": ["penicillin"],
-  "pregnancy_status": null,
-  "alcohol_use": "occasional",
-  "caffeine_preworkout_use": "none"
+  "pregnancyStatus": null,
+  "alcoholUse": "occasional",
+  "caffeinePreworkoutUse": "none"
 }
 ```
 
@@ -68,18 +70,20 @@ Authorization: Bearer <access_token>
 ```json
 {
   "name": "Warfarin",
-  "active_ingredient": "warfarin",
+  "activeIngredient": "warfarin",
   "dosage": "5mg",
   "form": "tablet",
   "frequency": "once daily",
-  "start_date": "2026-06-16",
-  "end_date": null,
-  "prescribing_doctor": "Dr. Smith",
+  "startDate": "2026-06-16",
+  "endDate": null,
+  "prescribingDoctor": "Dr. Smith",
   "notes": "Take in the evening",
-  "medication_category": "blood thinner",
-  "is_prescription": true
+  "medicationCategory": "blood thinner",
+  "isPrescription": true
 }
 ```
+
+`activeIngredient` may be left empty during early frontend work. The backend will store the medication name as a placeholder.
 
 `GET /medications`
 
@@ -96,7 +100,7 @@ Authorization: Bearer <access_token>
 ```json
 {
   "name": "Pre-workout",
-  "active_ingredient_category": "caffeine",
+  "activeIngredientCategory": "caffeine",
   "dose": "1 scoop",
   "frequency": "before exercise",
   "notes": "High caffeine"
@@ -104,6 +108,8 @@ Authorization: Bearer <access_token>
 ```
 
 `GET /supplements`
+
+`GET /supplements/{id}`
 
 `PUT /supplements/{id}`
 
@@ -143,9 +149,9 @@ Returns:
 
 ```json
 {
-  "medication_id": "uuid",
+  "medicationId": "uuid",
   "time": "08:30",
-  "repeat_pattern": "daily",
+  "repeatPattern": "daily",
   "timezone": "Europe/Berlin"
 }
 ```
@@ -170,10 +176,10 @@ Returns:
 
 ```json
 {
-  "caregiver_email": "caregiver@example.com",
+  "caregiverEmail": "caregiver@example.com",
   "relationship": "daughter",
-  "can_manage": false,
-  "missed_dose_alerts": true
+  "canManage": false,
+  "missedDoseAlerts": true
 }
 ```
 

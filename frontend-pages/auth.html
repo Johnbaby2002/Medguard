@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Auth</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a class="active" href="auth.html">Auth</a>
+        <a href="profile.html">Profile</a>
+        <a href="medications.html">Medications</a>
+        <a href="supplements.html">Supplements</a>
+        <a href="safety.html">Safety</a>
+        <a href="reminders.html">Reminders</a>
+        <a href="reports.html">Reports</a>
+        <a href="caregiver.html">Caregiver</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar"><h1>Auth</h1></div>
+      <section class="grid two">
+        <article class="card">
+          <h2>Register</h2>
+          <form data-endpoint="POST /auth/register">
+            <label>Email<input name="email" type="email" autocomplete="email"></label>
+            <label>Password<input name="password" type="password" autocomplete="new-password"></label>
+            <label>Full name<input name="fullName" autocomplete="name"></label>
+            <label>Role
+              <select name="role">
+                <option value="patient">patient</option>
+                <option value="caregiver">caregiver</option>
+                <option value="clinician">clinician</option>
+                <option value="admin">admin</option>
+              </select>
+            </label>
+            <button type="button">Register</button>
+          </form>
+        </article>
+        <article class="card">
+          <h2>Login</h2>
+          <form data-endpoint="POST /auth/login">
+            <label>Email<input name="email" type="email" autocomplete="email"></label>
+            <label>Password<input name="password" type="password" autocomplete="current-password"></label>
+            <button type="button">Login</button>
+          </form>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
