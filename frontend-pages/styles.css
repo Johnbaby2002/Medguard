@@ -184,6 +184,15 @@ button.secondary {
   color: #667580;
 }
 
+.status-line {
+  background: #fff;
+  border: 1px solid #dbe1e7;
+  border-radius: 8px;
+  font-weight: 700;
+  margin: 0 0 16px;
+  padding: 10px 12px;
+}
+
 @media (max-width: 840px) {
   .shell {
     grid-template-columns: 1fr;

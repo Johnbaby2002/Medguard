@@ -36,3 +36,11 @@ Recommended frontend routes:
 - `/integrations.html`
 
 API details are in `api-map.json` and `../backend/docs/frontend-api-contract.md`.
+
+`auth.html`, `medications.html`, and `scans.html` include `app.js`, a tiny working starter client:
+
+- Register or log in on `auth.html`.
+- The JWT is stored in `localStorage` as `medguardToken`.
+- Add medicines manually on `medications.html`.
+- Create barcode, OCR, camera, or upload drafts on `scans.html`.
+- Save a scan draft as a medication from the scan drafts table.

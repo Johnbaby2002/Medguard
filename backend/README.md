@@ -122,8 +122,11 @@ Medications:
 Scan intake:
 
 - `POST /scans/barcode`
+- `POST /scans/camera`
+- `POST /scans/upload`
 - `POST /scans/prescription-ocr`
 - `GET /scans`
+- `POST /scans/{id}/medication`
 
 Supplements:
 

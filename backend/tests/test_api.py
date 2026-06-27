@@ -110,9 +110,9 @@ def test_frontend_style_medication_and_supplement_payloads(client: TestClient) -
         json={
             "name": "Vitamin D",
             "activeIngredient": "",
-            "dosage": "1000 IU",
+            "dosage": "",
             "form": "Tablet",
-            "frequency": "daily",
+            "frequency": "",
             "startDate": "2026-06-27",
             "medicationCategory": "vitamin",
             "isPrescription": False,
@@ -121,6 +121,8 @@ def test_frontend_style_medication_and_supplement_payloads(client: TestClient) -
     assert medication.status_code == 201
     medication_data = medication.json()
     assert medication_data["active_ingredient"] == "Vitamin D"
+    assert medication_data["dosage"] == "confirm with label"
+    assert medication_data["frequency"] == "as directed"
     assert medication_data["form"] == "tablet"
     assert medication_data["is_prescription"] is False
 
@@ -179,6 +181,31 @@ def test_scan_ai_history_emergency_and_integration_starters(client: TestClient) 
     )
     assert ocr.status_code == 201
     assert ocr.json()["scan_type"] == "prescription_ocr"
+
+    camera = client.post(
+        "/scans/camera",
+        headers=headers,
+        json={"imageData": "data:image/png;base64,abc123", "fileName": "package.png"},
+    )
+    assert camera.status_code == 201
+    assert camera.json()["scan_type"] == "camera"
+
+    upload = client.post(
+        "/scans/upload",
+        headers=headers,
+        data={"ocr_text": "Cetirizine\n10mg tablet"},
+        files={"file": ("prescription.png", b"fake-image", "image/png")},
+    )
+    assert upload.status_code == 201
+    assert upload.json()["scan_type"] == "upload"
+
+    from_scan = client.post(
+        f"/scans/{upload.json()['id']}/medication",
+        headers=headers,
+        json={"frequency": "once daily"},
+    )
+    assert from_scan.status_code == 201
+    assert from_scan.json()["name"] == "Cetirizine"
 
     ai_review = client.post("/ai/safety-checks", headers=headers, json={"request_source": "test"})
     assert ai_review.status_code == 201

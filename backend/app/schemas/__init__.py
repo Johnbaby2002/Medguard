@@ -125,9 +125,9 @@ class HealthProfileOut(HealthProfileUpsert):
 class MedicationBase(BaseModel):
     name: str = Field(min_length=1, max_length=255)
     active_ingredient: str = Field(default="", max_length=255)
-    dosage: str = Field(min_length=1, max_length=100)
+    dosage: str = Field(default="confirm with label", max_length=100)
     form: MedicationForm = MedicationForm.other
-    frequency: str = Field(min_length=1, max_length=100)
+    frequency: str = Field(default="as directed", max_length=100)
     start_date: date | None = None
     end_date: date | None = None
     prescribing_doctor: str | None = None
@@ -161,8 +161,28 @@ class MedicationBase(BaseModel):
             return value.strip().lower().replace(" ", "_").replace("-", "_")
         return value
 
+    @field_validator("dosage", mode="before")
+    @classmethod
+    def default_blank_dosage(cls, value: str | None) -> str:
+        if value is None:
+            return "confirm with label"
+        if isinstance(value, str) and not value.strip():
+            return "confirm with label"
+        return value
+
+    @field_validator("frequency", mode="before")
+    @classmethod
+    def default_blank_frequency(cls, value: str | None) -> str:
+        if value is None:
+            return "as directed"
+        if isinstance(value, str) and not value.strip():
+            return "as directed"
+        return value
+
     @model_validator(mode="after")
     def validate_date_range(self) -> "MedicationBase":
+        self.dosage = self.dosage or "confirm with label"
+        self.frequency = self.frequency or "as directed"
         if self.start_date and self.end_date and self.end_date < self.start_date:
             raise ValueError("end_date must be on or after start_date")
         return self
@@ -436,6 +456,63 @@ class MedicationDraftOut(BaseModel):
     medication_category: str | None = None
     is_prescription: bool = True
     notes: str | None = None
+
+
+class MedicationFromScanCreate(BaseModel):
+    name: str | None = None
+    active_ingredient: str | None = None
+    dosage: str | None = None
+    form: MedicationForm | None = None
+    frequency: str | None = None
+    medication_category: str | None = None
+    is_prescription: bool | None = None
+    notes: str | None = None
+
+    model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(
+            data,
+            {
+                "active_ingredient": ("activeIngredient", "ingredient"),
+                "medication_category": ("medicationCategory", "category"),
+                "is_prescription": ("isPrescription", "prescription"),
+            },
+        )
+
+    @field_validator("form", mode="before")
+    @classmethod
+    def normalize_form(cls, value: str | MedicationForm | None) -> str | MedicationForm | None:
+        if value is None or value == "":
+            return None
+        if isinstance(value, str):
+            return value.strip().lower().replace(" ", "_").replace("-", "_")
+        return value
+
+
+class CameraScanRequest(BaseModel):
+    image_data: str = Field(min_length=1)
+    file_name: str | None = None
+    content_type: str | None = None
+    notes: str | None = None
+    ocr_text: str | None = None
+
+    model_config = ConfigDict(populate_by_name=True, str_strip_whitespace=True)
+
+    @model_validator(mode="before")
+    @classmethod
+    def accept_frontend_aliases(cls, data: Any) -> Any:
+        return accept_aliases(
+            data,
+            {
+                "image_data": ("imageData",),
+                "file_name": ("fileName",),
+                "content_type": ("contentType",),
+                "ocr_text": ("ocrText",),
+            },
+        )
 
 
 class MedicationScanOut(BaseModel):

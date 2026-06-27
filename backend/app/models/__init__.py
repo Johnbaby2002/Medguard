@@ -72,7 +72,9 @@ class ReminderStatus(str, Enum):
 
 class ScanType(str, Enum):
     barcode = "barcode"
+    camera = "camera"
     prescription_ocr = "prescription_ocr"
+    upload = "upload"
 
 
 class ScanStatus(str, Enum):

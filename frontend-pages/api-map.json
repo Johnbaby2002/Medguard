@@ -21,8 +21,11 @@
     },
     "scans": {
       "barcodeDraft": "POST /scans/barcode",
+      "cameraDraft": "POST /scans/camera",
+      "uploadDraft": "POST /scans/upload",
       "prescriptionOcrDraft": "POST /scans/prescription-ocr",
-      "list": "GET /scans"
+      "list": "GET /scans",
+      "saveAsMedication": "POST /scans/{id}/medication"
     },
     "supplements": {
       "create": "POST /supplements",

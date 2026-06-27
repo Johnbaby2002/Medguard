@@ -123,6 +123,27 @@ Returns dose/adherence logs and summary:
 }
 ```
 
+`POST /scans/camera`
+
+```json
+{
+  "imageData": "data:image/png;base64,...",
+  "fileName": "camera-capture.png",
+  "contentType": "image/png",
+  "notes": "Optional user note"
+}
+```
+
+`POST /scans/upload`
+
+Send `multipart/form-data`:
+
+```text
+file=<image or PDF>
+ocr_text=<optional OCR text>
+notes=<optional user note>
+```
+
 `POST /scans/prescription-ocr`
 
 ```json
@@ -134,7 +155,16 @@ Returns dose/adherence logs and summary:
 
 `GET /scans`
 
-Scan endpoints return medication drafts for review. The frontend should let the user confirm fields before calling `POST /medications`.
+`POST /scans/{id}/medication`
+
+```json
+{
+  "name": "Optional override",
+  "frequency": "once daily"
+}
+```
+
+Scan endpoints return medication drafts for review. The frontend can save a reviewed draft as a real medication with `POST /scans/{id}/medication`.
 
 ## Supplements
 

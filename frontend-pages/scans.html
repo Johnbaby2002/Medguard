@@ -23,6 +23,23 @@
       <div class="topbar"><h1>Scan Intake</h1></div>
       <section class="grid two">
         <article class="card">
+          <h2>Camera capture</h2>
+          <form data-camera-form="true">
+            <label>Take photo or choose image<input name="cameraImage" type="file" accept="image/*" capture="environment"></label>
+            <label>Notes<textarea name="notes"></textarea></label>
+            <button type="button">Create camera draft</button>
+          </form>
+        </article>
+        <article class="card">
+          <h2>Upload image or PDF</h2>
+          <form data-upload-form="true" enctype="multipart/form-data">
+            <label>File<input name="file" type="file" accept="image/*,application/pdf"></label>
+            <label>OCR text if available<textarea name="ocr_text"></textarea></label>
+            <label>Notes<textarea name="notes"></textarea></label>
+            <button type="button">Upload draft</button>
+          </form>
+        </article>
+        <article class="card">
           <h2>Barcode draft</h2>
           <form data-endpoint="POST /scans/barcode">
             <label>Barcode<input name="barcode"></label>
@@ -41,7 +58,15 @@
           </form>
         </article>
       </section>
+      <article class="card" style="margin-top:16px">
+        <h2>Scan drafts</h2>
+        <table class="table" data-scan-table="true">
+          <thead><tr><th>Type</th><th>Draft</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody><tr><td colspan="4" class="muted">Create a scan draft to see it here.</td></tr></tbody>
+        </table>
+      </article>
     </main>
   </div>
+  <script src="app.js"></script>
 </body>
 </html>

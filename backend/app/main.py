@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 
 from app.config import settings
 from app.database import Base, engine
@@ -25,8 +26,28 @@ from app.routers import (
 from app.rule_engine.seed_rules import seed_interaction_rules
 
 
+def ensure_postgres_enum_values() -> None:
+    if engine.dialect.name != "postgresql":
+        return
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                """
+                DO $$
+                BEGIN
+                    IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'scantype') THEN
+                        ALTER TYPE scantype ADD VALUE IF NOT EXISTS 'camera';
+                        ALTER TYPE scantype ADD VALUE IF NOT EXISTS 'upload';
+                    END IF;
+                END $$;
+                """
+            )
+        )
+
+
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    ensure_postgres_enum_values()
     Base.metadata.create_all(bind=engine)
     from app.database import SessionLocal
 
