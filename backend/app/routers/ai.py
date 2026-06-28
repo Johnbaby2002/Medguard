@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
 from app.database import get_db
-from app.models import AIReviewStatus, AISafetyReview, HealthProfile, Medication, Supplement, User
+from app.models import AIReviewStatus, AISafetyReview, HealthProfile, Medication, Substance, Supplement, User
 from app.routers.safety import run_safety_check_for_user
 from app.schemas import AISafetyReviewCreate, AISafetyReviewOut, AISafetyReviewResultUpdate
 from app.services.audit import log_audit
@@ -18,6 +18,7 @@ def build_ai_safety_snapshot(db: Session, user: User) -> dict:
     profile = db.scalar(select(HealthProfile).where(HealthProfile.user_id == user.id))
     medications = list(db.scalars(select(Medication).where(Medication.user_id == user.id).order_by(Medication.name)))
     supplements = list(db.scalars(select(Supplement).where(Supplement.user_id == user.id).order_by(Supplement.name)))
+    substances = list(db.scalars(select(Substance).where(Substance.user_id == user.id).order_by(Substance.name)))
     rule_result = run_safety_check_for_user(db, user.id)
     return {
         "user": {"id": user.id, "age": profile.age if profile else None, "sex": profile.sex.value if profile and profile.sex else None},
@@ -49,6 +50,18 @@ def build_ai_safety_snapshot(db: Session, user: User) -> dict:
                 "frequency": supplement.frequency,
             }
             for supplement in supplements
+        ],
+        "substances": [
+            {
+                "id": substance.id,
+                "name": substance.name,
+                "category": substance.category.value,
+                "active_ingredient": substance.active_ingredient,
+                "frequency": substance.frequency,
+                "amount": substance.amount,
+                "is_active": substance.is_active,
+            }
+            for substance in substances
         ],
         "rule_based_safety_result": rule_result.model_dump(mode="json"),
         "instructions": [

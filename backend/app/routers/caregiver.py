@@ -6,8 +6,18 @@ from sqlalchemy.orm import Session
 
 from app.auth.dependencies import can_access_patient, get_current_user
 from app.database import get_db
-from app.models import CaregiverAccess, Medication, User
-from app.schemas import CaregiverAccessOut, CaregiverInvite, MedicationOut, UserOut
+from app.models import CaregiverAccess, HealthProfile, Medication, MedicationLog, Reminder, ReminderStatus, Supplement, User
+from app.routers.reminders import reminder_to_out
+from app.routers.reports import medication_summary
+from app.schemas import (
+    CaregiverAccessOut,
+    CaregiverInvite,
+    MedicationLogOut,
+    MedicationOut,
+    MedicationSummaryReport,
+    ReminderOut,
+    UserOut,
+)
 from app.services.audit import log_audit
 
 router = APIRouter(prefix="/caregiver", tags=["caregiver"])
@@ -65,3 +75,46 @@ def caregiver_patient_medications(
     if not can_access_patient(db, current_user, patient_id):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No caregiver access for this patient")
     return list(db.scalars(select(Medication).where(Medication.user_id == patient_id).order_by(Medication.name)))
+
+
+@router.get("/patients/{patient_id}/reminders", response_model=list[ReminderOut])
+def caregiver_patient_reminders(
+    patient_id: str,
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+) -> list[ReminderOut]:
+    if not can_access_patient(db, current_user, patient_id):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No caregiver access for this patient")
+    reminders = list(db.scalars(select(Reminder).where(Reminder.user_id == patient_id).order_by(Reminder.time)))
+    return [reminder_to_out(reminder) for reminder in reminders]
+
+
+@router.get("/patients/{patient_id}/missed-doses", response_model=list[MedicationLogOut])
+def caregiver_patient_missed_doses(
+    patient_id: str,
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+) -> list[MedicationLog]:
+    if not can_access_patient(db, current_user, patient_id):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No caregiver access for this patient")
+    return list(
+        db.scalars(
+            select(MedicationLog)
+            .where(MedicationLog.user_id == patient_id, MedicationLog.status == ReminderStatus.missed)
+            .order_by(MedicationLog.logged_at.desc())
+        )
+    )
+
+
+@router.get("/patients/{patient_id}/report", response_model=MedicationSummaryReport)
+def caregiver_patient_report(
+    patient_id: str,
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+) -> MedicationSummaryReport:
+    if not can_access_patient(db, current_user, patient_id):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No caregiver access for this patient")
+    patient = db.get(User, patient_id)
+    if not patient:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found")
+    return medication_summary(patient, db)

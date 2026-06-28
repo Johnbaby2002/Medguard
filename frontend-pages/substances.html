@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Substances & Lifestyle</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="register.html">Register</a>
+        <a href="login.html">Login</a>
+        <a href="profile.html">Profile</a>
+        <a href="medications.html">Medications</a>
+        <a href="supplements.html">Supplements</a>
+        <a class="active" href="substances.html">Substances</a>
+        <a href="safety.html">Safety</a>
+        <a href="reports.html">Reports</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar">
+        <h1>Substances & Lifestyle</h1>
+        <span class="badge">Safety-aware</span>
+      </div>
+      <section class="grid two">
+        <article class="card">
+          <h2>Quick select</h2>
+          <div class="quick-grid">
+            <button type="button" class="secondary" data-substance-preset='{"name":"Alcohol","category":"alcohol","frequency":"occasionally"}'>Alcohol</button>
+            <button type="button" class="secondary" data-substance-preset='{"name":"Smoking / nicotine","category":"nicotine","activeIngredient":"nicotine","frequency":"daily"}'>Smoking/nicotine</button>
+            <button type="button" class="secondary" data-substance-preset='{"name":"Caffeine","category":"caffeine","activeIngredient":"caffeine","frequency":"daily"}'>Caffeine</button>
+            <button type="button" class="secondary" data-substance-preset='{"name":"Energy drink","category":"caffeine","activeIngredient":"caffeine","frequency":"as needed"}'>Energy drinks</button>
+            <button type="button" class="secondary" data-substance-preset='{"name":"Pre-workout","category":"supplement","activeIngredient":"caffeine","frequency":"before exercise"}'>Pre-workout</button>
+            <button type="button" class="secondary" data-substance-preset='{"name":"Birth control pills","category":"hormonal_contraception","activeIngredient":"ethinyl estradiol","frequency":"daily"}'>Birth control pills</button>
+            <button type="button" class="secondary" data-substance-preset='{"name":"Emergency contraception","category":"hormonal_contraception","activeIngredient":"levonorgestrel","frequency":"as directed"}'>Emergency contraception</button>
+            <button type="button" class="secondary" data-substance-preset='{"name":"Grapefruit juice","category":"food_interaction","activeIngredient":"grapefruit","frequency":"as consumed"}'>Grapefruit</button>
+            <button type="button" class="secondary" data-substance-preset='{"name":"Ibuprofen","category":"OTC_medicine","activeIngredient":"ibuprofen","frequency":"as needed"}'>Ibuprofen</button>
+            <button type="button" class="secondary" data-substance-preset='{"name":"Paracetamol / acetaminophen","category":"OTC_medicine","activeIngredient":"paracetamol","frequency":"as needed"}'>Paracetamol</button>
+            <button type="button" class="secondary" data-substance-preset='{"name":"Cold/flu medicine","category":"OTC_medicine","activeIngredient":"paracetamol","frequency":"as directed"}'>Cold medicine</button>
+            <button type="button" class="secondary" data-substance-preset='{"name":"Antihistamine","category":"OTC_medicine","activeIngredient":"antihistamine","frequency":"as needed"}'>Antihistamine</button>
+          </div>
+        </article>
+        <article class="card">
+          <h2>Add custom item</h2>
+          <form data-endpoint="POST /substances">
+            <label>Name<input name="name" placeholder="St. John's Wort"></label>
+            <label>Category
+              <select name="category">
+                <option value="alcohol">alcohol</option>
+                <option value="caffeine">caffeine</option>
+                <option value="nicotine">nicotine</option>
+                <option value="supplement">supplement</option>
+                <option value="hormonal_contraception">hormonal contraception</option>
+                <option value="OTC_medicine">OTC medicine</option>
+                <option value="food_interaction">food interaction</option>
+                <option value="recreational_placeholder">recreational placeholder</option>
+                <option value="other">other</option>
+              </select>
+            </label>
+            <label>Active ingredient<input name="activeIngredient" placeholder="hypericum, caffeine, grapefruit"></label>
+            <label>Frequency<input name="frequency" placeholder="daily, occasionally, as needed"></label>
+            <label>Amount<input name="amount" placeholder="1 drink, 200mg, 1 tablet"></label>
+            <label>Notes<textarea name="notes"></textarea></label>
+            <button type="button">Save item</button>
+          </form>
+        </article>
+      </section>
+      <article class="card" style="margin-top:16px">
+        <h2>Saved items</h2>
+        <table class="table" data-endpoint="GET /substances">
+          <thead><tr><th>Name</th><th>Category</th><th>Ingredient</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody><tr><td colspan="5" class="muted">Saved lifestyle and substance rows will appear here.</td></tr></tbody>
+        </table>
+      </article>
+    </main>
+  </div>
+  <script src="app.js?v=7"></script>
+</body>
+</html>

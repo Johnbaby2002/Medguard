@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Timeline</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="medications.html">Medications</a>
+        <a href="substances.html">Substances</a>
+        <a href="safety.html">Safety</a>
+        <a class="active" href="timeline.html">Timeline</a>
+        <a href="adherence.html">Adherence</a>
+        <a href="side-effects.html">Side Effects</a>
+        <a href="emergency.html">Emergency Card</a>
+        <button type="button" data-logout>Logout</button>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar"><h1>Medication Timeline</h1></div>
+      <section class="grid two" data-timeline>
+        <article class="card"><h2>Today</h2><p class="muted">Timeline will load after login.</p></article>
+      </section>
+    </main>
+  </div>
+  <script src="app.js?v=7"></script>
+</body>
+</html>

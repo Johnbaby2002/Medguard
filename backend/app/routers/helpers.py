@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import can_access_patient
-from app.models import Medication, Supplement, User
+from app.models import Medication, Substance, Supplement, User
 
 
 def get_owned_medication(db: Session, current_user: User, medication_id: str) -> Medication:
@@ -24,3 +24,10 @@ def get_owned_supplement(db: Session, current_user: User, supplement_id: str) ->
     if not supplement or supplement.user_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Supplement not found")
     return supplement
+
+
+def get_owned_substance(db: Session, current_user: User, substance_id: str) -> Substance:
+    substance = db.get(Substance, substance_id)
+    if not substance or substance.user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Substance not found")
+    return substance

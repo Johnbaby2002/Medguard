@@ -14,6 +14,6 @@ if (-not (Test-Path -LiteralPath ".env")) {
 }
 
 $env:DATABASE_URL = "sqlite:///./medguard_v2.db"
-$env:CORS_ORIGINS = '["http://localhost:3000","http://127.0.0.1:3000"]'
+$env:CORS_ORIGINS = '["http://localhost:3000","http://127.0.0.1:3000","http://localhost:3001","http://127.0.0.1:3001"]'
 
 & ".\.venv\Scripts\python.exe" dev.py

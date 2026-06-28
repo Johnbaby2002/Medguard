@@ -11,6 +11,7 @@ from app.models import MedicationLog, Reminder, ReminderStatus, User, utc_now
 from app.routers.helpers import get_manageable_medication
 from app.schemas import MedicationLogOut, ReminderCreate, ReminderOut, ReminderUpdate
 from app.services.audit import log_audit
+from app.services.schedule import scheduled_datetime
 
 router = APIRouter(prefix="/reminders", tags=["reminders"])
 
@@ -112,16 +113,25 @@ def delete_reminder(
 
 def mark_reminder(db: Session, current_user: User, reminder_id: str, status_value: ReminderStatus) -> MedicationLog:
     reminder = get_owned_reminder(db, current_user, reminder_id)
+    logged_at = utc_now()
+    final_status = status_value
+    if status_value == ReminderStatus.taken:
+        scheduled_at = scheduled_datetime(logged_at.date(), reminder.time)
+        if logged_at.replace(tzinfo=None) > scheduled_at:
+            final_status = ReminderStatus.late
+        if reminder.medication and reminder.medication.pills_remaining is not None:
+            pills_used = reminder.medication.pills_per_dose or 1
+            reminder.medication.pills_remaining = max(0, reminder.medication.pills_remaining - pills_used)
     log = MedicationLog(
         user_id=current_user.id,
         medication_id=reminder.medication_id,
         reminder_id=reminder.id,
-        status=status_value,
-        logged_at=utc_now(),
+        status=final_status,
+        logged_at=logged_at,
     )
     db.add(log)
     db.flush()
-    log_audit(db, current_user, f"mark_reminder_{status_value.value}", "reminder", reminder.id)
+    log_audit(db, current_user, f"mark_reminder_{final_status.value}", "reminder", reminder.id)
     db.commit()
     db.refresh(log)
     return log

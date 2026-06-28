@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-page">
+  <main class="auth-shell">
+    <section class="auth-brand">
+      <p class="eyebrow">Medication safety assistant</p>
+      <h1>MedGuard</h1>
+      <p>Login to manage medications, reminders, safety checks, reports, and caregiver sharing.</p>
+    </section>
+
+    <section class="auth-panel">
+      <article class="auth-card">
+        <h2>Welcome back</h2>
+        <p data-status class="status-line hidden"></p>
+        <form data-endpoint="POST /auth/login">
+          <label>Email<input name="email" type="email" autocomplete="email" required></label>
+          <label>Password
+            <span class="password-row">
+              <input name="password" type="password" autocomplete="current-password" required>
+              <button type="button" class="secondary tiny" data-toggle-password>Show</button>
+            </span>
+          </label>
+          <button type="button">Login</button>
+          <div class="auth-links">
+            <a class="text-link" href="forgot-password.html">Forgot password?</a>
+            <span class="muted">New user?</span>
+            <a class="text-link" href="register.html">Register</a>
+          </div>
+        </form>
+      </article>
+    </section>
+  </main>
+  <script src="app.js?v=7"></script>
+</body>
+</html>

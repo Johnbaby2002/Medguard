@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Share</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="reports.html">Reports</a>
+        <a class="active" href="share.html">Share</a>
+        <button type="button" data-logout>Logout</button>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar"><h1>Doctor Sharing Link</h1></div>
+      <article class="card">
+        <form data-endpoint="POST /share/report-link">
+          <label>Purpose<input name="purpose" value="medication_report"></label>
+          <label>Expires in hours<input name="expiresInHours" type="number" min="1" max="720" value="72"></label>
+          <button type="button">Create read-only report link</button>
+        </form>
+        <div data-share-result style="margin-top:12px"></div>
+      </article>
+    </main>
+  </div>
+  <script src="app.js?v=7"></script>
+</body>
+</html>

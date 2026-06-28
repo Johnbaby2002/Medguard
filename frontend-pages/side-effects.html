@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Side Effects</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="medications.html">Medications</a>
+        <a class="active" href="side-effects.html">Side Effects</a>
+        <a href="reports.html">Reports</a>
+        <button type="button" data-logout>Logout</button>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar"><h1>Side Effect Tracker</h1></div>
+      <section class="grid two">
+        <article class="card">
+          <h2>Log symptom</h2>
+          <form data-endpoint="POST /side-effects">
+            <label>Symptom<input name="symptom" placeholder="Nausea, dizziness, headache"></label>
+            <label>Severity
+              <select name="severity">
+                <option value="mild">mild</option>
+                <option value="moderate">moderate</option>
+                <option value="severe">severe</option>
+              </select>
+            </label>
+            <label>Started at<input name="startedAt" type="datetime-local"></label>
+            <label>Medication ID optional<input name="medicationId"></label>
+            <label>Notes<textarea name="notes"></textarea></label>
+            <button type="button">Save symptom</button>
+          </form>
+        </article>
+        <article class="card">
+          <h2>Summary</h2>
+          <div data-side-effect-summary><p class="muted">This does not diagnose side effects. Share this information with a doctor or pharmacist.</p></div>
+        </article>
+      </section>
+      <article class="card" style="margin-top:16px">
+        <h2>Logs</h2>
+        <table class="table" data-endpoint="GET /side-effects">
+          <thead><tr><th>Symptom</th><th>Severity</th><th>Started</th><th>Notes</th></tr></thead>
+          <tbody><tr><td colspan="4" class="muted">No logs yet.</td></tr></tbody>
+        </table>
+      </article>
+    </main>
+  </div>
+  <script src="app.js?v=7"></script>
+</body>
+</html>

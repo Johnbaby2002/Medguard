@@ -12,11 +12,13 @@
       <div class="brand">MedGuard</div>
       <nav class="nav">
         <a href="index.html">Dashboard</a>
-        <a href="auth.html">Auth</a>
+        <a href="register.html">Register</a>
+        <a href="login.html">Login</a>
         <a href="profile.html">Profile</a>
         <a class="active" href="medications.html">Medications</a>
         <a href="scans.html">Scan Intake</a>
         <a href="supplements.html">Supplements</a>
+        <a href="substances.html">Substances</a>
         <a href="safety.html">Safety</a>
         <a href="reminders.html">Reminders</a>
         <a href="reports.html">Reports</a>
@@ -30,7 +32,7 @@
       </div>
       <section class="grid two">
         <article class="card">
-          <h2>Add or edit medication</h2>
+          <h2>Add medication manually</h2>
           <form data-endpoint="POST /medications">
             <label>Name<input name="name" placeholder="Ibuprofen"></label>
             <label>Active ingredient<input name="activeIngredient" placeholder="ibuprofen"></label>
@@ -66,6 +68,28 @@
           </form>
         </article>
         <article class="card">
+          <h2>Add by camera</h2>
+          <form data-med-camera-form="true">
+            <label>Take photo or choose image<input name="cameraImage" type="file" accept="image/*" capture="environment"></label>
+            <label>Medication name<input name="name" placeholder="Optional if not using OCR"></label>
+            <label>OCR text if available<textarea name="ocrText"></textarea></label>
+            <label>Dosage<input name="dosage" placeholder="200mg"></label>
+            <label>Frequency<input name="frequency" placeholder="once daily"></label>
+            <button type="button">Add from camera</button>
+          </form>
+        </article>
+        <article class="card">
+          <h2>Add by upload</h2>
+          <form data-med-upload-form="true" enctype="multipart/form-data">
+            <label>Image or PDF<input name="file" type="file" accept="image/*,application/pdf"></label>
+            <label>Medication name<input name="name" placeholder="Optional if not using OCR"></label>
+            <label>OCR text if available<textarea name="ocr_text"></textarea></label>
+            <label>Dosage<input name="dosage" placeholder="200mg"></label>
+            <label>Frequency<input name="frequency" placeholder="once daily"></label>
+            <button type="button">Add from upload</button>
+          </form>
+        </article>
+        <article class="card">
           <h2>Medication table</h2>
           <table class="table" data-endpoint="GET /medications">
             <thead><tr><th>Name</th><th>Ingredient</th><th>Dose</th><th>Actions</th></tr></thead>
@@ -75,6 +99,6 @@
       </section>
     </main>
   </div>
-  <script src="app.js"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

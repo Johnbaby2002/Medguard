@@ -12,14 +12,23 @@
       <div class="brand">MedGuard</div>
       <nav class="nav">
         <a class="active" href="index.html">Dashboard</a>
-        <a href="auth.html">Auth</a>
+        <a href="register.html">Register</a>
+        <a href="login.html">Login</a>
         <a href="profile.html">Profile</a>
         <a href="medications.html">Medications</a>
         <a href="supplements.html">Supplements</a>
+        <a href="substances.html">Substances</a>
         <a href="safety.html">Safety</a>
+        <a href="timeline.html">Timeline</a>
+        <a href="adherence.html">Adherence</a>
+        <a href="side-effects.html">Side Effects</a>
         <a href="reminders.html">Reminders</a>
+        <a href="assistant.html">Assistant</a>
+        <a href="emergency.html">Emergency Card</a>
         <a href="reports.html">Reports</a>
+        <a href="share.html">Share</a>
         <a href="caregiver.html">Caregiver</a>
+        <button type="button" data-logout>Logout</button>
       </nav>
     </aside>
     <main class="main">
@@ -27,21 +36,52 @@
         <h1>Dashboard</h1>
         <a class="button" href="medications.html">Add medication</a>
       </div>
-      <section class="grid three">
+      <section class="grid three" data-dashboard-summary>
         <article class="card">
           <h2>Current medications</h2>
-          <div class="metric">0</div>
-          <p class="muted">GET /medications</p>
+          <div class="metric" data-total-medications>0</div>
+          <p class="muted"><span data-supplements>0</span> supplements tracked</p>
         </article>
         <article class="card">
           <h2>Today reminders</h2>
-          <div class="metric">0</div>
-          <p class="muted">GET /reminders/today</p>
+          <div class="metric" data-active-reminders>0</div>
+          <p class="muted"><span data-missed-doses>0</span> missed today</p>
         </article>
         <article class="card warning">
           <h2>Highest safety risk</h2>
-          <div class="metric">None</div>
-          <p class="muted">POST /safety-check</p>
+          <div class="metric" data-highest-risk>low</div>
+          <p class="muted"><span data-interactions>0</span> detected interactions</p>
+        </article>
+        <article class="card">
+          <h2>Next reminder</h2>
+          <div class="metric" data-next-reminder>No reminder scheduled</div>
+        </article>
+        <article class="card">
+          <h2>Adherence</h2>
+          <div class="metric" data-adherence>No logs yet</div>
+        </article>
+      </section>
+      <section class="grid three" data-risk-summary style="margin-top:16px">
+        <article class="card warning">
+          <h2>Risk score</h2>
+          <div class="metric" data-risk-score>0</div>
+          <p><span class="badge" data-risk-level>low</span></p>
+        </article>
+        <article class="card">
+          <h2>Today</h2>
+          <p><strong>Missed:</strong> <span data-risk-missed>0</span></p>
+          <p><strong>Adherence:</strong> <span data-risk-adherence>No schedule</span></p>
+          <p><strong>Next:</strong> <span data-risk-next>No pending reminder</span></p>
+        </article>
+        <article class="card">
+          <h2>Top warnings</h2>
+          <div data-risk-warnings><p class="muted">No active warnings detected.</p></div>
+        </article>
+      </section>
+      <section class="grid two" data-timeline style="margin-top:16px">
+        <article class="card">
+          <h2>Today's medication schedule</h2>
+          <p class="muted">Timeline will load after login.</p>
         </article>
       </section>
       <section class="grid two" style="margin-top:16px">
@@ -59,5 +99,6 @@
       </section>
     </main>
   </div>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

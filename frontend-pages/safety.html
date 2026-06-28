@@ -12,10 +12,12 @@
       <div class="brand">MedGuard</div>
       <nav class="nav">
         <a href="index.html">Dashboard</a>
-        <a href="auth.html">Auth</a>
+        <a href="register.html">Register</a>
+        <a href="login.html">Login</a>
         <a href="profile.html">Profile</a>
         <a href="medications.html">Medications</a>
         <a href="supplements.html">Supplements</a>
+        <a href="substances.html">Substances</a>
         <a class="active" href="safety.html">Safety</a>
         <a href="reminders.html">Reminders</a>
         <a href="reports.html">Reports</a>
@@ -27,7 +29,7 @@
         <h1>Safety Check</h1>
         <button type="button" data-endpoint="POST /safety-check">Run check</button>
       </div>
-      <section class="grid two">
+      <section class="grid two" data-safety-result>
         <article class="card warning">
           <h2>Risk summary</h2>
           <p><strong>Total risk score:</strong> <span class="muted">Render score</span></p>
@@ -48,5 +50,6 @@
       </article>
     </main>
   </div>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

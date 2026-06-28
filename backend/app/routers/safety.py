@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
 from app.database import get_db
-from app.models import HealthProfile, InteractionResult, Medication, Supplement, User
+from app.models import HealthProfile, InteractionResult, Medication, Substance, Supplement, User
 from app.rule_engine.engine import SafetyContext, analyze_safety
 from app.schemas import InteractionHistoryOut, SafetyCheckResponse
 from app.services.audit import log_audit
@@ -18,7 +18,11 @@ def run_safety_check_for_user(db: Session, user_id: str) -> SafetyCheckResponse:
     profile = db.scalar(select(HealthProfile).where(HealthProfile.user_id == user_id))
     medications = list(db.scalars(select(Medication).where(Medication.user_id == user_id)))
     supplements = list(db.scalars(select(Supplement).where(Supplement.user_id == user_id)))
-    return analyze_safety(db, SafetyContext(profile=profile, medications=medications, supplements=supplements))
+    substances = list(db.scalars(select(Substance).where(Substance.user_id == user_id, Substance.is_active)))
+    return analyze_safety(
+        db,
+        SafetyContext(profile=profile, medications=medications, supplements=supplements, substances=substances),
+    )
 
 
 @router.post("/safety-check", response_model=SafetyCheckResponse)

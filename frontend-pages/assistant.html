@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedGuard Assistant</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">MedGuard</div>
+      <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="safety.html">Safety</a>
+        <a class="active" href="assistant.html">Assistant</a>
+        <a href="reports.html">Reports</a>
+        <button type="button" data-logout>Logout</button>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="topbar"><h1>AI Medication Assistant Placeholder</h1></div>
+      <section class="card" data-assistant-status>
+        <p class="muted">Checking assistant connection...</p>
+      </section>
+      <article class="card">
+        <form data-endpoint="POST /assistant/ask">
+          <label>Question<textarea name="question" placeholder="Can I drink alcohol tonight?"></textarea></label>
+          <button type="button">Ask</button>
+        </form>
+      </article>
+      <section data-assistant-answer style="margin-top:16px"></section>
+    </main>
+  </div>
+  <script src="app.js?v=7"></script>
+</body>
+</html>

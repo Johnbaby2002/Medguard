@@ -1,8 +1,8 @@
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #f6f7f9;
-  color: #172026;
+  background: #100b1f;
+  color: #f7f3ff;
 }
 
 * {
@@ -10,6 +10,7 @@
 }
 
 body {
+  background: #100b1f;
   margin: 0;
 }
 
@@ -25,14 +26,15 @@ a {
 }
 
 .side {
-  background: #15202b;
+  background: linear-gradient(180deg, #1e1238, #120c22);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   color: #fff;
   padding: 24px 18px;
 }
 
 .brand {
-  font-size: 22px;
-  font-weight: 800;
+  font-size: 24px;
+  font-weight: 900;
   margin-bottom: 24px;
 }
 
@@ -41,19 +43,29 @@ a {
   gap: 8px;
 }
 
-.nav a {
+.nav a,
+.nav button {
+  background: transparent;
   border-radius: 8px;
-  color: #dbe6ee;
+  color: #d8cafa;
+  font-weight: 700;
+  justify-content: flex-start;
+  min-height: auto;
   padding: 10px 12px;
+  text-align: left;
 }
 
 .nav a:hover,
-.nav a.active {
-  background: #243443;
+.nav a.active,
+.nav button:hover {
+  background: #6d38d6;
   color: #fff;
+  transform: none;
 }
 
 .main {
+  background: linear-gradient(135deg, #120d22, #21143d);
+  min-width: 0;
   padding: 28px;
 }
 
@@ -65,8 +77,13 @@ a {
   margin-bottom: 24px;
 }
 
+h1,
+h2 {
+  letter-spacing: 0;
+}
+
 h1 {
-  font-size: 28px;
+  font-size: 30px;
   line-height: 1.2;
   margin: 0;
 }
@@ -84,14 +101,17 @@ h1 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.card {
-  background: #fff;
-  border: 1px solid #dbe1e7;
+.card,
+.auth-card {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.24);
   padding: 18px;
 }
 
-.card h2 {
+.card h2,
+.auth-card h2 {
   font-size: 18px;
   margin: 0 0 14px;
 }
@@ -99,6 +119,8 @@ h1 {
 .metric {
   font-size: 30px;
   font-weight: 800;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
 }
 
 form {
@@ -107,7 +129,7 @@ form {
 }
 
 label {
-  color: #43515c;
+  color: #e8ddff;
   display: grid;
   font-size: 13px;
   gap: 6px;
@@ -116,14 +138,30 @@ label {
 input,
 select,
 textarea {
-  background: #fff;
-  border: 1px solid #cbd4dc;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 6px;
-  color: #172026;
+  color: #fff;
   font: inherit;
   min-height: 40px;
+  outline: none;
   padding: 9px 10px;
   width: 100%;
+}
+
+select option {
+  background: #1f1538;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #a985ff;
+  box-shadow: 0 0 0 3px rgba(169, 133, 255, 0.22);
+}
+
+input:invalid:not(:placeholder-shown) {
+  border-color: #ff7b7b;
 }
 
 textarea {
@@ -134,23 +172,61 @@ textarea {
 button,
 .button {
   align-items: center;
-  background: #0b6bcb;
+  background: #7c3aed;
   border: 0;
   border-radius: 6px;
   color: #fff;
   cursor: pointer;
   display: inline-flex;
   font: inherit;
-  font-weight: 700;
+  font-weight: 800;
   justify-content: center;
   min-height: 40px;
   padding: 9px 14px;
+  transition: background 160ms ease, transform 160ms ease, opacity 160ms ease;
+}
+
+button:hover,
+.button:hover {
+  background: #8f55ff;
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+  transform: none;
 }
 
 .button.secondary,
 button.secondary {
-  background: #e8edf2;
-  color: #172026;
+  background: rgba(255, 255, 255, 0.1);
+  color: #f7f3ff;
+}
+
+button.tiny {
+  font-size: 12px;
+  min-height: 32px;
+  padding: 6px 10px;
+}
+
+.button-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.quick-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.quick-grid button {
+  justify-content: flex-start;
+  min-height: 44px;
+  text-align: left;
 }
 
 .table {
@@ -160,41 +236,220 @@ button.secondary {
 
 .table th,
 .table td {
-  border-bottom: 1px solid #e1e6eb;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   padding: 10px;
   text-align: left;
   vertical-align: top;
 }
 
 .badge {
-  background: #eef5ff;
+  background: rgba(124, 58, 237, 0.22);
   border-radius: 999px;
-  color: #0b4f94;
+  color: #ddccff;
   display: inline-block;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   padding: 4px 8px;
 }
 
+.severity-low {
+  background: rgba(34, 197, 94, 0.22);
+  color: #b8ffd0;
+}
+
+.severity-moderate {
+  background: rgba(250, 204, 21, 0.22);
+  color: #fef3c7;
+}
+
+.severity-high {
+  background: rgba(249, 115, 22, 0.24);
+  color: #fed7aa;
+}
+
+.severity-critical {
+  background: rgba(239, 68, 68, 0.24);
+  color: #fecaca;
+}
+
 .warning {
-  border-left: 4px solid #c2422f;
+  border-left: 4px solid #ff7b7b;
 }
 
 .muted {
-  color: #667580;
+  color: #c7b8ea;
+}
+
+.hidden {
+  display: none;
 }
 
 .status-line {
-  background: #fff;
-  border: 1px solid #dbe1e7;
   border-radius: 8px;
-  font-weight: 700;
+  font-weight: 800;
   margin: 0 0 16px;
   padding: 10px 12px;
 }
 
+.status-line.success {
+  background: rgba(34, 197, 94, 0.14);
+  border: 1px solid rgba(34, 197, 94, 0.38);
+  color: #b8ffd0;
+}
+
+.status-line.error {
+  background: rgba(239, 68, 68, 0.14);
+  border: 1px solid rgba(239, 68, 68, 0.38);
+  color: #ffcaca;
+}
+
+.user-box {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.plain-list {
+  line-height: 1.5;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.check-row {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.check-row input {
+  min-height: auto;
+  width: auto;
+}
+
+.password-row {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.text-link {
+  color: #c4a7ff;
+  font-weight: 800;
+}
+
+.auth-links {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.auth-page {
+  min-height: 100vh;
+}
+
+.auth-shell {
+  align-items: center;
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(320px, 1.2fr);
+  min-height: 100vh;
+  padding: 36px;
+}
+
+.auth-shell.single {
+  grid-template-columns: minmax(280px, 720px);
+  justify-content: center;
+}
+
+.auth-brand h1 {
+  font-size: 58px;
+  margin: 0 0 12px;
+}
+
+.auth-brand p {
+  color: #d7c8f7;
+  font-size: 18px;
+  line-height: 1.5;
+  max-width: 520px;
+}
+
+.eyebrow {
+  color: #b695ff;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.auth-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.auth-tabs button.active {
+  background: #7c3aed;
+}
+
+.reset-form {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
+.emergency-card {
+  background: #fff;
+  color: #111827;
+}
+
+.emergency-card .muted {
+  color: #4b5563;
+}
+
+.emergency-card h2,
+.emergency-card h3 {
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.emergency-head {
+  align-items: start;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+pre {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  overflow: auto;
+  padding: 12px;
+  white-space: pre-wrap;
+}
+
+.qr-box {
+  align-items: center;
+  aspect-ratio: 1;
+  border: 2px dashed #7c3aed;
+  border-radius: 8px;
+  color: #4c1d95;
+  display: flex;
+  font-weight: 900;
+  justify-content: center;
+  max-width: 180px;
+  text-align: center;
+}
+
 @media (max-width: 840px) {
-  .shell {
+  .shell,
+  .auth-shell {
     grid-template-columns: 1fr;
   }
 
@@ -203,11 +458,48 @@ button.secondary {
   }
 
   .grid.two,
-  .grid.three {
+  .grid.three,
+  .quick-grid {
     grid-template-columns: 1fr;
   }
 
-  .main {
+  .main,
+  .auth-shell {
     padding: 20px;
+  }
+
+  .emergency-head,
+  .topbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .auth-brand h1 {
+    font-size: 40px;
+  }
+}
+
+@media print {
+  body,
+  .main {
+    background: #fff;
+    color: #111827;
+  }
+
+  .side,
+  .topbar button,
+  .nav,
+  [data-user-box] {
+    display: none;
+  }
+
+  .shell {
+    display: block;
+  }
+
+  .card,
+  .emergency-card {
+    box-shadow: none;
+    color: #111827;
   }
 }

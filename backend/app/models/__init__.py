@@ -62,12 +62,32 @@ class InteractionType(str, Enum):
     caffeine_preworkout = "caffeine_preworkout"
     sedative_combination = "sedative_combination"
     nsaid_duplication = "nsaid_duplication"
+    lifestyle = "lifestyle"
+
+
+class SubstanceCategory(str, Enum):
+    alcohol = "alcohol"
+    caffeine = "caffeine"
+    nicotine = "nicotine"
+    supplement = "supplement"
+    hormonal_contraception = "hormonal_contraception"
+    OTC_medicine = "OTC_medicine"
+    food_interaction = "food_interaction"
+    recreational_placeholder = "recreational_placeholder"
+    other = "other"
 
 
 class ReminderStatus(str, Enum):
     pending = "pending"
     taken = "taken"
     missed = "missed"
+    late = "late"
+
+
+class SideEffectSeverity(str, Enum):
+    mild = "mild"
+    moderate = "moderate"
+    severe = "severe"
 
 
 class ScanType(str, Enum):
@@ -110,7 +130,10 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     full_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    phone_number: Mapped[str | None] = mapped_column(String(40), nullable=True)
     role: Mapped[UserRole] = mapped_column(SAEnum(UserRole), default=UserRole.patient, nullable=False)
+    terms_accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    medical_disclaimer_accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
 
     health_profile: Mapped["HealthProfile | None"] = relationship(
@@ -118,6 +141,18 @@ class User(Base):
     )
     medications: Mapped[list["Medication"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     supplements: Mapped[list["Supplement"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    substances: Mapped[list["Substance"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+
+
+class PasswordResetToken(Base):
+    __tablename__ = "password_reset_tokens"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+    token_hash: Mapped[str] = mapped_column(String(128), unique=True, index=True, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
 
 
 class HealthProfile(Base):
@@ -133,6 +168,8 @@ class HealthProfile(Base):
     pregnancy_status: Mapped[str | None] = mapped_column(String(100), nullable=True)
     alcohol_use: Mapped[str | None] = mapped_column(String(100), nullable=True)
     caffeine_preworkout_use: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    emergency_contact_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    emergency_contact_phone: Mapped[str | None] = mapped_column(String(40), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False)
 
@@ -155,6 +192,10 @@ class Medication(Base):
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     medication_category: Mapped[str | None] = mapped_column(String(100), index=True, nullable=True)
     is_prescription: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    pills_remaining: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    pills_per_dose: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    refill_threshold: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    pharmacy_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False)
 
@@ -177,6 +218,24 @@ class Supplement(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False)
 
     user: Mapped[User] = relationship(back_populates="supplements")
+
+
+class Substance(Base):
+    __tablename__ = "substances"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(255), index=True, nullable=False)
+    category: Mapped[SubstanceCategory] = mapped_column(SAEnum(SubstanceCategory), index=True, nullable=False)
+    active_ingredient: Mapped[str | None] = mapped_column(String(255), index=True, nullable=True)
+    frequency: Mapped[str] = mapped_column(String(100), default="as needed", nullable=False)
+    amount: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, onupdate=utc_now, nullable=False)
+
+    user: Mapped[User] = relationship(back_populates="substances")
 
 
 class InteractionRule(Base):
@@ -237,6 +296,31 @@ class MedicationLog(Base):
 
     medication: Mapped[Medication] = relationship(back_populates="logs")
     reminder: Mapped[Reminder | None] = relationship(back_populates="logs")
+
+
+class SideEffectLog(Base):
+    __tablename__ = "side_effect_logs"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+    symptom: Mapped[str] = mapped_column(String(255), index=True, nullable=False)
+    severity: Mapped[SideEffectSeverity] = mapped_column(SAEnum(SideEffectSeverity), nullable=False)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    medication_id: Mapped[str | None] = mapped_column(ForeignKey("medications.id", ondelete="SET NULL"), nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+
+
+class ShareToken(Base):
+    __tablename__ = "share_tokens"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_uuid)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+    token: Mapped[str] = mapped_column(String(128), unique=True, index=True, nullable=False)
+    purpose: Mapped[str] = mapped_column(String(100), default="medication_report", nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, nullable=False)
+    revoked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
 
 class MedicationScan(Base):

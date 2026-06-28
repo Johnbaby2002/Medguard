@@ -1,6 +1,6 @@
 # MedGuard Backend
 
-FastAPI backend for MedGuard. It supports JWT authentication, password hashing, user health profiles, medication CRUD, supplement CRUD, a rule-based interaction engine, reminders, caregiver access, organization-ready roles, audit logging, and doctor-ready JSON reports.
+FastAPI backend for MedGuard. It supports JWT authentication, password hashing, user health profiles, medication CRUD, supplement CRUD, substance/lifestyle CRUD, a rule-based interaction engine, reminders, caregiver access, organization-ready roles, audit logging, and doctor-ready JSON reports.
 
 MedGuard is a medication safety support tool. It does not diagnose disease or replace clinicians. Safety results include:
 
@@ -103,7 +103,15 @@ Auth:
 
 - `POST /auth/register`
 - `POST /auth/login`
+- `POST /auth/forgot-password`
+- `POST /auth/reset-password`
 - `GET /auth/me`
+
+Registration requires `full_name`, `email`, `password`, `repeat_password`, `role`, `age`, `terms_consent`, and `medical_disclaimer_consent`. `phone_number` is optional. Passwords must be at least 8 characters and include uppercase, lowercase, and a special character.
+
+Dashboard:
+
+- `GET /dashboard/summary`
 
 Profile:
 
@@ -118,6 +126,8 @@ Medications:
 - `PUT /medications/{id}`
 - `DELETE /medications/{id}`
 - `GET /medications/history`
+- `POST /medications/camera`
+- `POST /medications/upload`
 
 Scan intake:
 
@@ -136,6 +146,15 @@ Supplements:
 - `PUT /supplements/{id}`
 - `DELETE /supplements/{id}`
 
+Substances and lifestyle factors:
+
+- `POST /substances`
+- `GET /substances`
+- `PUT /substances/{id}`
+- `DELETE /substances/{id}`
+
+Substance categories are `alcohol`, `caffeine`, `nicotine`, `supplement`, `hormonal_contraception`, `OTC_medicine`, `food_interaction`, `recreational_placeholder`, and `other`.
+
 Safety:
 
 - `POST /safety-check`
@@ -148,6 +167,21 @@ AI handoff:
 - `GET /ai/safety-checks/{id}`
 - `PUT /ai/safety-checks/{id}/result`
 
+Assistant:
+
+- `POST /assistant/ask`
+- `GET /assistant/status`
+
+`/assistant/ask` now tries the local AI adapter first. Configure it with:
+
+```text
+AI_PIPELINE_ENABLED=true
+AI_PIPELINE_PATH=../ai-pipeline
+AI_PIPELINE_MODULE=medguard_ai_pipeline
+```
+
+The module should expose one of these functions: `answer_question`, `ask`, `analyze`, `run`, or `process`. The backend sends profile, medications, supplements, substances, and the current rule-based safety result. If the local AI module is missing or fails, MedGuard falls back to the rule-based assistant and keeps the app working.
+
 Reminders:
 
 - `POST /reminders`
@@ -156,6 +190,18 @@ Reminders:
 - `DELETE /reminders/{id}`
 - `POST /reminders/{id}/taken`
 - `POST /reminders/{id}/missed`
+
+Startup MVP additions:
+
+- `GET /dashboard/risk-summary`
+- `GET /timeline/today`
+- `GET /adherence/summary`
+- `GET /refills/due`
+- `POST /side-effects`
+- `GET /side-effects`
+- `GET /side-effects/summary`
+- `POST /share/report-link`
+- `GET /share/report/{token}`
 
 Reports:
 
@@ -167,6 +213,9 @@ Caregiver:
 - `POST /caregiver/invite`
 - `GET /caregiver/patients`
 - `GET /caregiver/patients/{id}/medications`
+- `GET /caregiver/patients/{id}/reminders`
+- `GET /caregiver/patients/{id}/missed-doses`
+- `GET /caregiver/patients/{id}/report`
 
 Organizations:
 

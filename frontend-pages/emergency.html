@@ -12,6 +12,14 @@
       <div class="brand">MedGuard</div>
       <nav class="nav">
         <a href="index.html">Dashboard</a>
+        <a href="register.html">Register</a>
+        <a href="login.html">Login</a>
+        <a href="profile.html">Profile</a>
+        <a href="medications.html">Medications</a>
+        <a href="supplements.html">Supplements</a>
+        <a href="substances.html">Substances</a>
+        <a href="safety.html">Safety</a>
+        <a href="reminders.html">Reminders</a>
         <a href="reports.html">Reports</a>
         <a class="active" href="emergency.html">Emergency Card</a>
         <a href="caregiver.html">Caregiver</a>
@@ -20,19 +28,25 @@
     <main class="main">
       <div class="topbar">
         <h1>Emergency Medication Card</h1>
-        <button type="button" data-endpoint="GET /emergency-card">Load card</button>
+        <div class="button-row">
+          <button type="button" data-endpoint="GET /emergency-card">Load card</button>
+          <button type="button" class="secondary" onclick="window.print()">Print</button>
+        </div>
       </div>
-      <section class="grid two">
-        <article class="card">
-          <h2>Patient and allergies</h2>
-          <p class="muted">Render patient, known conditions, and allergies.</p>
-        </article>
-        <article class="card warning">
-          <h2>High-priority warnings</h2>
-          <p class="muted">Render high and critical safety warnings.</p>
+      <section data-emergency-card>
+        <article class="card emergency-card">
+          <div class="emergency-head">
+            <div>
+              <p class="eyebrow">MedGuard Emergency Card</p>
+              <h2>Load your card</h2>
+              <p class="muted">Sign in, then load a printable medication card for urgent care visits.</p>
+            </div>
+            <div class="qr-box">QR placeholder</div>
+          </div>
         </article>
       </section>
     </main>
   </div>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

@@ -6,9 +6,13 @@ def register(client: TestClient, email: str = "patient@example.com", role: str =
         "/auth/register",
         json={
             "email": email,
-            "password": "StrongPassword123",
+            "password": "StrongPassword123!",
+            "repeat_password": "StrongPassword123!",
             "full_name": email.split("@")[0].title(),
             "role": role,
+            "age": 35,
+            "terms_consent": True,
+            "medical_disclaimer_consent": True,
         },
     )
     assert response.status_code == 201
@@ -20,6 +24,61 @@ def test_root_points_to_docs(client: TestClient) -> None:
 
     assert response.status_code == 200
     assert response.json()["docs"] == "/docs"
+
+
+def test_password_policy_and_reset_flow(client: TestClient) -> None:
+    weak = client.post(
+        "/auth/register",
+        json={
+            "email": "weak@example.com",
+            "password": "password",
+            "repeatPassword": "password",
+            "fullName": "Weak Password",
+            "role": "patient",
+            "age": 35,
+            "termsConsent": True,
+            "medicalDisclaimerConsent": True,
+        },
+    )
+    assert weak.status_code == 422
+
+    mismatch = client.post(
+        "/auth/register",
+        json={
+            "email": "mismatch@example.com",
+            "password": "StrongPassword123!",
+            "repeatPassword": "StrongPassword123?",
+            "fullName": "Mismatch Password",
+            "role": "patient",
+            "age": 35,
+            "termsConsent": True,
+            "medicalDisclaimerConsent": True,
+        },
+    )
+    assert mismatch.status_code == 422
+
+    register(client, "reset@example.com")
+    forgot = client.post("/auth/forgot-password", json={"email": "reset@example.com"})
+    assert forgot.status_code == 200
+    reset_token = forgot.json()["reset_token"]
+    assert reset_token
+
+    reset = client.post(
+        "/auth/reset-password",
+        json={
+            "token": reset_token,
+            "password": "NewStrong123!",
+            "repeatPassword": "NewStrong123!",
+        },
+    )
+    assert reset.status_code == 200
+    assert reset.json()["access_token"]
+
+    old_login = client.post("/auth/login", json={"email": "reset@example.com", "password": "StrongPassword123!"})
+    assert old_login.status_code == 401
+
+    new_login = client.post("/auth/login", json={"email": "reset@example.com", "password": "NewStrong123!"})
+    assert new_login.status_code == 200
 
 
 def test_auth_profile_medication_supplement_safety_report_flow(client: TestClient) -> None:
@@ -37,6 +96,8 @@ def test_auth_profile_medication_supplement_safety_report_flow(client: TestClien
             "allergies": ["penicillin"],
             "alcohol_use": "occasional",
             "caffeine_preworkout_use": "none",
+            "emergency_contact_name": "Sam Patient",
+            "emergency_contact_phone": "+1-555-0100",
         },
     )
     assert profile.status_code == 200
@@ -98,6 +159,14 @@ def test_auth_profile_medication_supplement_safety_report_flow(client: TestClien
     assert report.status_code == 200
     assert len(report.json()["current_medications"]) == 2
     assert len(report.json()["supplements"]) == 1
+    assert "recommendations" in report.json()
+    assert "generated_date" in report.json()
+
+    dashboard = client.get("/dashboard/summary", headers=headers)
+    assert dashboard.status_code == 200
+    assert dashboard.json()["total_medications"] == 2
+    assert dashboard.json()["total_supplements"] == 1
+    assert dashboard.json()["detected_interactions"] >= 1
 
 
 def test_frontend_style_medication_and_supplement_payloads(client: TestClient) -> None:
@@ -141,6 +210,81 @@ def test_frontend_style_medication_and_supplement_payloads(client: TestClient) -
     detail = client.get(f"/supplements/{supplement.json()['id']}", headers=headers)
     assert detail.status_code == 200
     assert detail.json()["active_ingredient_category"] == "creatine monohydrate"
+
+
+def test_substances_crud_and_safety_rules(client: TestClient) -> None:
+    token = register(client, "substances@example.com")["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    sleeping_pill = client.post(
+        "/medications",
+        headers=headers,
+        json={
+            "name": "Zolpidem",
+            "activeIngredient": "zolpidem",
+            "dosage": "5mg",
+            "form": "tablet",
+            "frequency": "nightly",
+            "medicationCategory": "sleeping pill",
+        },
+    )
+    assert sleeping_pill.status_code == 201
+
+    alcohol = client.post(
+        "/substances",
+        headers=headers,
+        json={"name": "Alcohol", "category": "alcohol", "frequency": "occasionally", "amount": "1 drink"},
+    )
+    assert alcohol.status_code == 201
+    assert alcohol.json()["category"] == "alcohol"
+
+    birth_control = client.post(
+        "/substances",
+        headers=headers,
+        json={
+            "name": "Birth control pills",
+            "category": "hormonal_contraception",
+            "activeIngredient": "ethinyl estradiol",
+            "frequency": "daily",
+        },
+    )
+    assert birth_control.status_code == 201
+
+    st_johns = client.post(
+        "/substances",
+        headers=headers,
+        json={
+            "name": "St. John's Wort",
+            "category": "supplement",
+            "activeIngredient": "hypericum",
+            "frequency": "daily",
+        },
+    )
+    assert st_johns.status_code == 201
+
+    listed = client.get("/substances", headers=headers)
+    assert listed.status_code == 200
+    assert {item["name"] for item in listed.json()} >= {"Alcohol", "Birth control pills", "St. John's Wort"}
+
+    updated = client.put(
+        f"/substances/{alcohol.json()['id']}",
+        headers=headers,
+        json={"amount": "2 drinks", "notes": "weekends"},
+    )
+    assert updated.status_code == 200
+    assert updated.json()["amount"] == "2 drinks"
+
+    safety = client.post("/safety-check", headers=headers, json={})
+    assert safety.status_code == 200
+    safety_data = safety.json()
+    assert safety_data["highest_severity"] == "critical"
+    explanations = " ".join(item["explanation"] for item in safety_data["interactions"])
+    assert "Alcohol with sleeping pills" in explanations
+    assert "St. John's Wort" in explanations
+    assert safety_data["disclaimer"] == "This is not medical advice. Consult a doctor or pharmacist."
+
+    deleted = client.delete(f"/substances/{st_johns.json()['id']}", headers=headers)
+    assert deleted.status_code == 204
 
 
 def test_scan_ai_history_emergency_and_integration_starters(client: TestClient) -> None:
@@ -227,7 +371,8 @@ def test_scan_ai_history_emergency_and_integration_starters(client: TestClient) 
 
     emergency = client.get("/emergency-card", headers=headers)
     assert emergency.status_code == 200
-    assert emergency.json()["patient"]["email"] == "features@example.com"
+    assert emergency.json()["user_name"] == "Features"
+    assert emergency.json()["emergency_contact"]["email"] == "features@example.com"
 
     integration = client.post(
         "/integrations",
@@ -240,6 +385,39 @@ def test_scan_ai_history_emergency_and_integration_starters(client: TestClient) 
     languages = client.get("/localization/languages", headers=headers)
     assert languages.status_code == 200
     assert languages.json()[0]["code"] == "en"
+
+
+def test_direct_camera_and_upload_create_medications(client: TestClient) -> None:
+    token = register(client, "upload@example.com")["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    upload = client.post(
+        "/medications/upload",
+        headers=headers,
+        data={"name": "Paracetamol", "dosage": "500mg", "frequency": "as needed"},
+        files={"file": ("medicine.png", b"fake-image", "image/png")},
+    )
+    assert upload.status_code == 201
+    assert upload.json()["name"] == "Paracetamol"
+    assert upload.json()["active_ingredient"] == "Paracetamol"
+
+    camera = client.post(
+        "/medications/camera",
+        headers=headers,
+        json={
+            "imageData": "data:image/jpeg;base64,abc123",
+            "fileName": "camera.jpg",
+            "name": "Loratadine",
+            "dosage": "10mg",
+            "frequency": "daily",
+        },
+    )
+    assert camera.status_code == 201
+    assert camera.json()["name"] == "Loratadine"
+
+    medications = client.get("/medications", headers=headers)
+    assert medications.status_code == 200
+    assert {med["name"] for med in medications.json()} == {"Loratadine", "Paracetamol"}
 
 
 def test_reminder_and_adherence_flow(client: TestClient) -> None:
@@ -268,11 +446,95 @@ def test_reminder_and_adherence_flow(client: TestClient) -> None:
 
     taken = client.post(f"/reminders/{reminder_id}/taken", headers=headers, json={})
     assert taken.status_code == 200
-    assert taken.json()["status"] == "taken"
+    assert taken.json()["status"] in {"taken", "late"}
 
     today = client.get("/reminders/today", headers=headers)
     assert today.status_code == 200
-    assert today.json()[0]["taken_status"] is True
+    assert today.json()[0]["taken_status"] is True or taken.json()["status"] == "late"
+
+
+def test_startup_mvp_endpoints(client: TestClient) -> None:
+    token = register(client, "startup@example.com")["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    medication = client.post(
+        "/medications",
+        headers=headers,
+        json={
+            "name": "Ibuprofen",
+            "activeIngredient": "ibuprofen",
+            "dosage": "200mg",
+            "form": "tablet",
+            "frequency": "as needed",
+            "medicationCategory": "nsaid",
+            "isPrescription": False,
+            "pillsRemaining": 3,
+            "pillsPerDose": 1,
+            "refillThreshold": 5,
+            "pharmacyName": "Campus Pharmacy",
+        },
+    )
+    assert medication.status_code == 201
+    med_id = medication.json()["id"]
+
+    reminder = client.post(
+        "/reminders",
+        headers=headers,
+        json={"medicationId": med_id, "time": "23:59", "repeatPattern": "daily"},
+    )
+    assert reminder.status_code == 201
+
+    alcohol = client.post(
+        "/substances",
+        headers=headers,
+        json={"name": "Alcohol", "category": "alcohol", "frequency": "occasionally"},
+    )
+    assert alcohol.status_code == 201
+
+    risk = client.get("/dashboard/risk-summary", headers=headers)
+    assert risk.status_code == 200
+    assert risk.json()["total_medications"] == 1
+    assert risk.json()["total_substances"] == 1
+    assert "disclaimer" in risk.json()
+
+    timeline = client.get("/timeline/today", headers=headers)
+    assert timeline.status_code == 200
+    assert set(timeline.json().keys()) == {"morning", "afternoon", "evening", "night"}
+
+    adherence = client.get("/adherence/summary", headers=headers)
+    assert adherence.status_code == 200
+    assert "weekly_trend" in adherence.json()
+
+    refills = client.get("/refills/due", headers=headers)
+    assert refills.status_code == 200
+    assert refills.json()[0]["name"] == "Ibuprofen"
+
+    side_effect = client.post(
+        "/side-effects",
+        headers=headers,
+        json={"symptom": "nausea", "severity": "mild", "medicationId": med_id},
+    )
+    assert side_effect.status_code == 201
+
+    side_summary = client.get("/side-effects/summary", headers=headers)
+    assert side_summary.status_code == 200
+    assert side_summary.json()["total_logs"] == 1
+    assert "does not diagnose" in side_summary.json()["note"]
+
+    assistant = client.post("/assistant/ask", headers=headers, json={"question": "Can I drink alcohol tonight?"})
+    assert assistant.status_code == 200
+    assert assistant.json()["disclaimer"] == "This is not medical advice. Consult a doctor or pharmacist."
+
+    assistant_status = client.get("/assistant/status", headers=headers)
+    assert assistant_status.status_code == 200
+    assert "connected" in assistant_status.json()
+    assert assistant_status.json()["fallback"] == "rule_based_safety_engine"
+
+    share = client.post("/share/report-link", headers=headers, json={"expiresInHours": 24})
+    assert share.status_code == 201
+    shared = client.get(f"/share/report/{share.json()['token']}")
+    assert shared.status_code == 200
+    assert shared.json()["report"]["current_medications"][0]["name"] == "Ibuprofen"
 
 
 def test_caregiver_can_view_patient_medications(client: TestClient) -> None:
@@ -309,6 +571,16 @@ def test_caregiver_can_view_patient_medications(client: TestClient) -> None:
     meds = client.get(f"/caregiver/patients/{patient_id}/medications", headers=caregiver_headers)
     assert meds.status_code == 200
     assert meds.json()[0]["name"] == "Amlodipine"
+
+    reminders = client.get(f"/caregiver/patients/{patient_id}/reminders", headers=caregiver_headers)
+    assert reminders.status_code == 200
+
+    missed = client.get(f"/caregiver/patients/{patient_id}/missed-doses", headers=caregiver_headers)
+    assert missed.status_code == 200
+
+    report = client.get(f"/caregiver/patients/{patient_id}/report", headers=caregiver_headers)
+    assert report.status_code == 200
+    assert report.json()["current_medications"][0]["name"] == "Amlodipine"
 
 
 def test_invalid_reminder_time_rejected(client: TestClient) -> None:

@@ -5,11 +5,17 @@
     "auth": {
       "register": "POST /auth/register",
       "login": "POST /auth/login",
-      "me": "GET /auth/me"
+      "me": "GET /auth/me",
+      "forgotPassword": "POST /auth/forgot-password",
+      "resetPassword": "POST /auth/reset-password"
     },
     "profile": {
       "get": "GET /profile",
       "save": "PUT /profile"
+    },
+    "dashboard": {
+      "summary": "GET /dashboard/summary",
+      "riskSummary": "GET /dashboard/risk-summary"
     },
     "medications": {
       "create": "POST /medications",
@@ -17,7 +23,9 @@
       "detail": "GET /medications/{id}",
       "update": "PUT /medications/{id}",
       "delete": "DELETE /medications/{id}",
-      "history": "GET /medications/history"
+      "history": "GET /medications/history",
+      "createFromCamera": "POST /medications/camera",
+      "createFromUpload": "POST /medications/upload"
     },
     "scans": {
       "barcodeDraft": "POST /scans/barcode",
@@ -33,6 +41,23 @@
       "detail": "GET /supplements/{id}",
       "update": "PUT /supplements/{id}",
       "delete": "DELETE /supplements/{id}"
+    },
+    "substances": {
+      "create": "POST /substances",
+      "list": "GET /substances",
+      "update": "PUT /substances/{id}",
+      "delete": "DELETE /substances/{id}",
+      "categories": [
+        "alcohol",
+        "caffeine",
+        "nicotine",
+        "supplement",
+        "hormonal_contraception",
+        "OTC_medicine",
+        "food_interaction",
+        "recreational_placeholder",
+        "other"
+      ]
     },
     "safety": {
       "check": "POST /safety-check",
@@ -50,6 +75,27 @@
       "taken": "POST /reminders/{id}/taken",
       "missed": "POST /reminders/{id}/missed"
     },
+    "timeline": {
+      "today": "GET /timeline/today"
+    },
+    "adherence": {
+      "summary": "GET /adherence/summary"
+    },
+    "refills": {
+      "due": "GET /refills/due"
+    },
+    "sideEffects": {
+      "create": "POST /side-effects",
+      "list": "GET /side-effects",
+      "summary": "GET /side-effects/summary"
+    },
+    "assistant": {
+      "ask": "POST /assistant/ask"
+    },
+    "share": {
+      "createReportLink": "POST /share/report-link",
+      "readReport": "GET /share/report/{token}"
+    },
     "reports": {
       "medicationSummary": "GET /reports/medication-summary",
       "emergencyCard": "GET /emergency-card"
@@ -57,7 +103,10 @@
     "caregiver": {
       "invite": "POST /caregiver/invite",
       "patients": "GET /caregiver/patients",
-      "patientMedications": "GET /caregiver/patients/{id}/medications"
+      "patientMedications": "GET /caregiver/patients/{id}/medications",
+      "patientReminders": "GET /caregiver/patients/{id}/reminders",
+      "patientMissedDoses": "GET /caregiver/patients/{id}/missed-doses",
+      "patientReport": "GET /caregiver/patients/{id}/report"
     },
     "integrations": {
       "create": "POST /integrations",

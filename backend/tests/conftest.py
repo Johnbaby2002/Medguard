@@ -51,9 +51,13 @@ def auth_headers(client: TestClient) -> dict[str, str]:
         "/api/v1/auth/register",
         json={
             "email": "patient@example.com",
-            "password": "StrongPassword123",
+            "password": "StrongPassword123!",
+            "repeat_password": "StrongPassword123!",
             "full_name": "Alex Patient",
             "role": "patient",
+            "age": 35,
+            "terms_consent": True,
+            "medical_disclaimer_consent": True,
         },
     )
     assert response.status_code == 201
