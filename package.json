@@ -1,0 +1,14 @@
+{
+  "name": "medguard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MedGuard backend, frontend handoff pages, and AI pipeline starter.",
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "dev": "node scripts/dev.mjs",
+    "backend": "node scripts/backend.mjs",
+    "frontend": "node scripts/frontend.mjs",
+    "test": "node scripts/test.mjs",
+    "start": "npm run dev"
+  }
+}

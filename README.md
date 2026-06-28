@@ -8,6 +8,39 @@ The system is medically cautious. It does not diagnose disease and does not repl
 This is not medical advice. Consult a doctor or pharmacist.
 ```
 
+## Quick Start
+
+Use these commands from the project root:
+
+```bash
+cd Medguard
+npm install
+npm run setup
+npm run dev
+```
+
+Open:
+
+```text
+Frontend: http://127.0.0.1:3000/register.html
+Backend docs: http://127.0.0.1:8000/docs
+```
+
+Useful commands:
+
+```bash
+npm run backend    # backend only
+npm run frontend   # frontend pages only
+npm run test       # backend tests
+```
+
+Requirements:
+
+- Node.js 18+
+- Python 3.11+
+
+`npm run setup` creates `backend/.venv`, installs Python dependencies, and creates a local SQLite `.env` file. No Docker or PostgreSQL is required for the quick prototype run.
+
 ## Key Features
 
 - Medication management with manual entry, camera capture, upload, and barcode/OCR starter endpoints
@@ -53,6 +86,9 @@ backend/
 frontend-pages/
   *.html
   api-map.json
+scripts/
+  setup.mjs
+  dev.mjs
 ai-starter/
   API_CONTRACT.md
   client_example.py
@@ -60,9 +96,11 @@ ai-pipeline/
   medguard_ai_pipeline.py
 ```
 
-## Backend Database
+## Database Options
 
-PostgreSQL is the main database.
+SQLite is the easiest local option and is used by `npm run setup`.
+
+PostgreSQL is available for a more production-like setup.
 
 The local Docker database uses:
 
