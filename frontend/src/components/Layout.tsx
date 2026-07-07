@@ -18,18 +18,31 @@ export default function Layout() {
           <NavLink className="sidebar-link" to="/dashboard">
             Dashboard
           </NavLink>
+
           <NavLink className="sidebar-link" to="/medications">
             Medications
           </NavLink>
+
+          <NavLink className="sidebar-link" to="/supplements">
+            Supplements
+          </NavLink>
+
+          <NavLink className="sidebar-link" to="/substances">
+            Substances
+          </NavLink>  
+
           <NavLink className="sidebar-link" to="/safety">
             Safety
           </NavLink>
+
           <NavLink className="sidebar-link" to="/profile">
             Profile
           </NavLink>
+
           <NavLink className="sidebar-link" to="/reminders">
             Reminders
           </NavLink>
+
           <NavLink className="sidebar-link" to="/reports">
             Reports
           </NavLink>

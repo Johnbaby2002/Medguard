@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, Bell, ClipboardList, UserRound } from "lucide-react";
+import {
+  AlertTriangle,
+  Bell,
+  ClipboardList,
+  FlaskConical,
+  Leaf,
+  UserRound,
+} from "lucide-react";
 import { getInteractionHistory } from "../api/history";
 
 type HealthProfile = {
@@ -25,12 +32,34 @@ type Reminder = {
   taken: boolean;
 };
 
+type Supplement = {
+  id: string;
+  name: string;
+  category: string;
+  dose: string;
+  frequency: string;
+  notes: string;
+};
+
+type Substance = {
+  id: string;
+  name: string;
+  type: string;
+  amount: string;
+  frequency: string;
+  notes: string;
+};
+
 const profileStorageKey = "medguard_health_profile";
 const remindersStorageKey = "medguard_reminders";
+const supplementsStorageKey = "medguard_supplements";
+const substancesStorageKey = "medguard_substances";
 
 export default function ReportsPage() {
   const [profile, setProfile] = useState<HealthProfile | null>(null);
   const [reminders, setReminders] = useState<Reminder[]>([]);
+  const [supplements, setSupplements] = useState<Supplement[]>([]);
+  const [substances, setSubstances] = useState<Substance[]>([]);
 
   const historyQuery = useQuery({
     queryKey: ["interaction-history"],
@@ -40,6 +69,8 @@ export default function ReportsPage() {
   useEffect(() => {
     const storedProfile = localStorage.getItem(profileStorageKey);
     const storedReminders = localStorage.getItem(remindersStorageKey);
+    const storedSupplements = localStorage.getItem(supplementsStorageKey);
+    const storedSubstances = localStorage.getItem(substancesStorageKey);
 
     if (storedProfile) {
       setProfile(JSON.parse(storedProfile));
@@ -48,6 +79,14 @@ export default function ReportsPage() {
     if (storedReminders) {
       setReminders(JSON.parse(storedReminders));
     }
+
+    if (storedSupplements) {
+      setSupplements(JSON.parse(storedSupplements));
+    }
+
+    if (storedSubstances) {
+      setSubstances(JSON.parse(storedSubstances));
+    }
   }, []);
 
   const history = historyQuery.data ?? [];
@@ -55,6 +94,14 @@ export default function ReportsPage() {
 
   const activeReminders = reminders.filter((reminder) => !reminder.taken);
   const takenReminders = reminders.filter((reminder) => reminder.taken);
+
+  const dailySupplements = supplements.filter((item) =>
+    item.frequency.toLowerCase().includes("daily")
+  );
+
+  const dailySubstances = substances.filter((item) =>
+    item.frequency.toLowerCase().includes("daily")
+  );
 
   const highestRisk = useMemo(() => {
     if (history.length === 0) return 0;
@@ -66,13 +113,36 @@ export default function ReportsPage() {
     return history.reduce((sum, item) => sum + item.interactions.length, 0);
   }, [history]);
 
+  const profileCompleteness = useMemo(() => {
+    if (!profile) return 0;
+
+    const fields = [
+      profile.age,
+      profile.weight,
+      profile.sex,
+      profile.pregnant,
+      profile.kidneyDisease,
+      profile.liverDisease,
+      profile.allergies,
+      profile.conditions,
+      profile.notes,
+    ];
+
+    const completedFields = fields.filter(
+      (field) => field && field.trim().length > 0
+    ).length;
+
+    return Math.round((completedFields / fields.length) * 100);
+  }, [profile]);
+
   return (
     <div>
       <header className="page-header">
         <p className="eyebrow">Health insights</p>
         <h1 className="page-title">Reports</h1>
         <p className="page-description">
-          Review safety trends, reminder activity, and health profile context.
+          Review safety trends, reminder activity, supplements, substances, and
+          health profile context.
         </p>
       </header>
 
@@ -119,10 +189,36 @@ export default function ReportsPage() {
           <div className="stat-card-top">
             <div>
               <p className="stat-label">Profile</p>
-              <h2 className="stat-value">{profile ? "Set" : "Empty"}</h2>
+              <h2 className="stat-value">
+                {profile ? `${profileCompleteness}%` : "Empty"}
+              </h2>
             </div>
             <div className="stat-card-icon">
               <UserRound size={22} />
+            </div>
+          </div>
+        </section>
+
+        <section className="card stat-card">
+          <div className="stat-card-top">
+            <div>
+              <p className="stat-label">Supplements</p>
+              <h2 className="stat-value">{supplements.length}</h2>
+            </div>
+            <div className="stat-card-icon">
+              <Leaf size={22} />
+            </div>
+          </div>
+        </section>
+
+        <section className="card stat-card">
+          <div className="stat-card-top">
+            <div>
+              <p className="stat-label">Substances</p>
+              <h2 className="stat-value">{substances.length}</h2>
+            </div>
+            <div className="stat-card-icon">
+              <FlaskConical size={22} />
             </div>
           </div>
         </section>
@@ -167,7 +263,9 @@ export default function ReportsPage() {
 
               <div className="interaction-card">
                 <h4 className="interaction-title">Overall trend</h4>
-                <p className="risk-label">Highest recorded risk: {highestRisk}</p>
+                <p className="risk-label">
+                  Highest recorded risk: {highestRisk}
+                </p>
                 <p className="risk-label">
                   Total interactions found: {totalInteractions}
                 </p>
@@ -210,9 +308,7 @@ export default function ReportsPage() {
 
             <div className="interaction-card">
               <h4 className="interaction-title">Health profile context</h4>
-              <p className="risk-label">
-                Age: {profile?.age || "Not set"}
-              </p>
+              <p className="risk-label">Age: {profile?.age || "Not set"}</p>
               <p className="risk-label">
                 Weight: {profile?.weight ? `${profile.weight} kg` : "Not set"}
               </p>
@@ -244,6 +340,105 @@ export default function ReportsPage() {
                 <strong>Notes:</strong> {profile?.notes || "None added"}
               </p>
             </div>
+          </div>
+        </section>
+      </div>
+
+      <div className="safety-layout" style={{ marginTop: 24 }}>
+        <section className="card safety-panel">
+          <h2 className="safety-panel-title">Supplements overview</h2>
+          <p className="safety-panel-text">
+            Vitamins, minerals, herbal products, and other supplement items
+            stored on this device.
+          </p>
+
+          <div className="interaction-list" style={{ marginTop: 20 }}>
+            <div className="interaction-card">
+              <h4 className="interaction-title">Supplement summary</h4>
+              <p className="risk-label">
+                Total supplements: {supplements.length}
+              </p>
+              <p className="risk-label">
+                Daily supplements: {dailySupplements.length}
+              </p>
+              <p className="risk-label">
+                Categories:{" "}
+                {new Set(supplements.map((item) => item.category)).size}
+              </p>
+            </div>
+
+            {supplements.length === 0 ? (
+              <div className="interaction-card">
+                <h4 className="interaction-title">No supplements added</h4>
+                <p className="interaction-description">
+                  Add supplements to improve report quality.
+                </p>
+              </div>
+            ) : (
+              supplements.slice(0, 5).map((item) => (
+                <div className="interaction-card" key={item.id}>
+                  <h4 className="interaction-title">{item.name}</h4>
+                  <p className="risk-label">Category: {item.category}</p>
+                  <p className="risk-label">
+                    Dose: {item.dose || "Not specified"}
+                  </p>
+                  <p className="risk-label">
+                    Frequency: {item.frequency || "Not specified"}
+                  </p>
+                  {item.notes && (
+                    <p className="interaction-description">{item.notes}</p>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+
+        <section className="card safety-panel">
+          <h2 className="safety-panel-title">Substances overview</h2>
+          <p className="safety-panel-text">
+            Alcohol, caffeine, nicotine, grapefruit, OTC medicines, and other
+            lifestyle factors stored on this device.
+          </p>
+
+          <div className="interaction-list" style={{ marginTop: 20 }}>
+            <div className="interaction-card">
+              <h4 className="interaction-title">Substance summary</h4>
+              <p className="risk-label">
+                Total substances: {substances.length}
+              </p>
+              <p className="risk-label">
+                Daily substances: {dailySubstances.length}
+              </p>
+              <p className="risk-label">
+                Types: {new Set(substances.map((item) => item.type)).size}
+              </p>
+            </div>
+
+            {substances.length === 0 ? (
+              <div className="interaction-card">
+                <h4 className="interaction-title">No substances added</h4>
+                <p className="interaction-description">
+                  Add substances to improve lifestyle risk reporting.
+                </p>
+              </div>
+            ) : (
+              substances.slice(0, 5).map((item) => (
+                <div className="interaction-card" key={item.id}>
+                  <h4 className="interaction-title">{item.name}</h4>
+                  <p className="risk-label">Type: {item.type}</p>
+                  <p className="risk-label">
+                    Amount: {item.amount || "Not specified"}
+                  </p>
+                  <p className="risk-label">
+                    Frequency: {item.frequency || "Not specified"}
+                  </p>
+                  {item.notes && (
+                    <p className="interaction-description">{item.notes}</p>
+                  )}
+                </div>
+              ))
+            )}
           </div>
         </section>
       </div>
