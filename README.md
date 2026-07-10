@@ -10,7 +10,7 @@ MedGuard does not diagnose, prescribe, or replace doctors or pharmacists. It pro
 
 | Role | Team Member |
 |---|---|
-| Frontend | Artem Liasnikov |
+| Frontend | Artem Lisniakov |
 | Backend | John Baby Nayathodan |
 | AI | Joyel Raju |
 | Business Lead | Khadija Mahmoud |
