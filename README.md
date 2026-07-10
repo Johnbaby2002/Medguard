@@ -1,12 +1,137 @@
 # MedGuard
 
-MedGuard is a medication safety support project. The backend provides authentication, health profiles, medication, supplement, and substance/lifestyle CRUD, rule-based interaction checks, reminders, caregiver access, organization-ready roles, and doctor-ready JSON reports.
+**AI-Powered Medication Safety Assistant**
 
-The system is medically cautious. It does not diagnose disease and does not replace doctors or pharmacists. Safety responses include:
+MedGuard is a medication safety support platform designed to help users manage medications, supplements, lifestyle factors, reminders, and interaction risks in one place. The project is built as a university MVP and focuses on medication safety awareness, adherence support, caregiver access, and doctor-ready reporting.
+
+MedGuard does not diagnose, prescribe, or replace doctors or pharmacists. It provides safety support and clear warnings that should be discussed with a healthcare professional.
+
+## Team
+
+| Role | Team Member |
+|---|---|
+| Frontend | Artem Liasnikov |
+| Backend | John Baby Nayathodan |
+| AI | Joyel Raju |
+| Business Lead | Khadija Mahmoud |
+
+## Problem
+
+Many people take multiple medications at the same time. They may also use over-the-counter medicines, supplements, alcohol, caffeine, nicotine, birth control, herbal products, or other lifestyle substances. These combinations can create safety risks that are easy to miss.
+
+Common problems MedGuard addresses:
+
+- Users forget what medicines they take or when they took them.
+- Users may not know that medicines can interact with food, supplements, alcohol, or other medicines.
+- Doctors and pharmacists need a clear medication list to give better advice.
+- Caregivers may need a simple way to help patients track medication routines.
+- Medication safety information is often difficult for users to understand.
+
+## Solution
+
+MedGuard gives users a simple digital place to record their health profile, medications, supplements, and lifestyle factors. The app then checks for rule-based safety risks and explains them in plain language.
+
+The goal is not to replace professional medical advice. The goal is to help users become more organized, more informed, and better prepared when speaking with a doctor or pharmacist.
+
+## How MedGuard Works
+
+1. **Create a health profile**
+
+   Users can record basic health information such as age, allergies, known conditions, pregnancy status, alcohol use, caffeine use, and emergency contact details.
+
+2. **Add medications**
+
+   Users can add prescription medicines, over-the-counter medicines, dosage, frequency, form, prescribing doctor, notes, refill details, and schedule information.
+
+3. **Add supplements and lifestyle factors**
+
+   Users can track items such as vitamins, protein, creatine, herbal products, alcohol, caffeine, energy drinks, nicotine, birth control, grapefruit, painkillers, cold medicine, and antihistamines.
+
+4. **Run a safety check**
+
+   MedGuard analyzes the user's medication list, supplements, lifestyle factors, and health profile using a rule-based safety engine.
+
+5. **Receive simple results**
+
+   The app returns a risk score, warning level, plain-language explanation, safety recommendation, and medical disclaimer.
+
+6. **Track reminders and reports**
+
+   Users can create reminders, mark doses as taken or missed, view adherence summaries, and generate doctor-ready medication reports.
+
+## Main Features
+
+- User registration and login
+- Secure password hashing and token-based authentication
+- Personal health profile
+- Medication management
+- Supplement management
+- Substances and lifestyle tracking
+- Rule-based medication safety analysis
+- Interaction risk score
+- Plain-language safety explanations
+- Smart medication reminders
+- Missed-dose tracking
+- Medication timeline
+- Refill reminder support
+- Side effect logging
+- Emergency medication card
+- Doctor-ready medication summary report
+- Caregiver support
+- Organization-ready structure for future clinic or pharmacy use
+- AI pipeline starter for future AI integration
+
+## Example Safety Cases
+
+MedGuard includes starter safety rules for common medication and lifestyle risks, such as:
+
+- Blood thinner with NSAID painkiller may increase bleeding risk.
+- Sleeping pill with alcohol may cause dangerous sedation.
+- Anxiety medication with sleeping pill may increase drowsiness and fall risk.
+- Antibiotics with birth control may reduce contraceptive effectiveness in some cases.
+- St. John's Wort with birth control may reduce contraceptive effectiveness.
+- Grapefruit with certain medicines may increase drug levels.
+- High caffeine or pre-workout with anxiety medication may increase heart rate and nervousness.
+- Paracetamol or acetaminophen with alcohol may increase liver risk.
+- Multiple cold medicines with the same ingredient may increase overdose risk.
+
+These examples are for MVP demonstration and are not a complete clinical interaction database.
+
+## Technology Stack
+
+**Backend**
+
+- FastAPI
+- Python
+- SQLAlchemy
+- SQLite for local prototype use
+- PostgreSQL-ready database configuration
+- JWT authentication
+- Pydantic validation
+
+**Frontend**
+
+- HTML, CSS, and JavaScript handoff pages
+- React/Vite frontend structure may also be used by the frontend team, depending on the active branch/version
+
+**AI**
+
+- Local AI pipeline starter
+- Rule-based assistant fallback
+- Designed so the AI team can connect a future model without changing the core backend structure
+
+## Project Structure
 
 ```text
-This is not medical advice. Consult a doctor or pharmacist.
+Medguard/
+  backend/          FastAPI backend, database models, services, safety engine
+  frontend-pages/   HTML/CSS/JS handoff pages for frontend integration
+  ai-pipeline/      Local AI pipeline starter
+  ai-starter/       AI integration contract and example client
+  scripts/          Easy setup, run, and test commands
 ```
+
+Some versions of the project may also include a `frontend/` folder for the React/Vite frontend.
 
 ## Quick Start
 
@@ -19,242 +144,77 @@ npm run setup
 npm run dev
 ```
 
-Open:
+Open the app locally:
 
 ```text
-Frontend: http://127.0.0.1:3000/register.html
+Frontend: http://127.0.0.1:3000
 Backend docs: http://127.0.0.1:8000/docs
 ```
 
 Useful commands:
 
 ```bash
-npm run backend    # backend only
-npm run frontend   # frontend pages only
-npm run test       # backend tests
+npm run backend
+npm run frontend
+npm run test
 ```
 
-Requirements:
+## Requirements
 
-- Node.js 18+
-- Python 3.11+
+- Node.js 18 or newer
+- Python 3.11 or newer
+- Git
 
-`npm run setup` creates `backend/.venv`, installs Python dependencies, and creates a local SQLite `.env` file. No Docker or PostgreSQL is required for the quick prototype run.
+Docker is optional. The default local setup uses SQLite so teammates can run the project quickly without installing PostgreSQL.
 
-## Key Features
+## Database
 
-- Medication management with manual entry, camera capture, upload, and barcode/OCR starter endpoints
-- Substances and lifestyle tracking for alcohol, caffeine, nicotine, birth control, grapefruit, OTC medicines, and non-judgmental placeholders
-- AI-powered medication safety check integration point
-- Drug-drug, drug-food, and drug-supplement interaction detection
-- Smart medication reminders and missed-dose tracking
-- Personalized health profile for more accurate risk assessment
-- Personalized medication risk score
-- Plain-language explanations of interaction risks
-- Doctor-ready medication reports
-- Caregiver access and shared medication management
-- Medication history and adherence tracking
-- Emergency medication card for urgent-care handoff
-- Risk dashboard, medication timeline, refill reminders, side effect tracker, rule-based assistant, and temporary doctor sharing links
+For local development, MedGuard uses SQLite because it is simple and easy for teammates to run.
 
-## Future Roadmap
+For a more production-like setup, the backend is prepared for PostgreSQL. This makes the architecture easier to extend later for clinics, pharmacies, or other organization-based use cases.
+
+## Testing
+
+Run the backend test suite with:
+
+```bash
+npm run test
+```
+
+The tests check the main backend flows such as authentication, medication management, safety checks, reminders, reports, caregiver access, substances, side effects, and sharing features.
+
+## Safety and Medical Disclaimer
+
+MedGuard is a medication safety support tool. It is not a medical device and does not replace a doctor, pharmacist, or emergency service.
+
+Always include this disclaimer with safety-related results:
+
+```text
+This is not medical advice. Consult a doctor or pharmacist.
+```
+
+Users should not start, stop, or change medication based only on MedGuard. Any warning or recommendation should be discussed with a qualified healthcare professional.
+
+## Current MVP Limitations
+
+- The safety engine uses starter rule-based examples, not a complete medical database.
+- The AI assistant is a placeholder/starter and should not be treated as a clinical AI system.
+- OCR, barcode scanning, predictive risk analysis, EHR integration, wearable integration, and multilingual support are future features.
+- The current app is intended for prototype demonstration and academic project work.
+
+## Future Improvements
 
 - OCR prescription scanning
-- Wearable and EHR integration
-- Predictive AI for high-risk patients
+- Barcode medicine scanning
+- More complete clinical interaction database
+- Real AI assistant integration
 - Multi-language support
-- Pharmacy and insurance integration for B2B use cases
+- Emergency medication card sharing
+- Wearable integration
+- EHR integration
+- Pharmacy and insurance integration
+- B2B clinic/pharmacy dashboard
 
-## Repository Structure
+## Summary
 
-```text
-backend/
-  app/
-    main.py
-    config.py
-    database.py
-    models/
-    schemas/
-    routers/
-    services/
-    auth/
-    rule_engine/
-  migrations/
-  tests/
-  docker-compose.yml
-  dev.py
-frontend-pages/
-  *.html
-  api-map.json
-scripts/
-  setup.mjs
-  dev.mjs
-ai-starter/
-  API_CONTRACT.md
-  client_example.py
-ai-pipeline/
-  medguard_ai_pipeline.py
-```
-
-## Database Options
-
-SQLite is the easiest local option and is used by `npm run setup`.
-
-PostgreSQL is available for a more production-like setup.
-
-The local Docker database uses:
-
-```text
-postgresql+psycopg://medguard:medguard@localhost:5432/medguard
-```
-
-SQLite is still available for quick local testing through `backend/.env.sqlite.example`.
-
-## Run Backend On Windows
-
-```powershell
-cd backend
-.\start-postgres-docker.ps1
-```
-
-Open:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-## Run Backend On macOS Or Linux
-
-```bash
-cd backend
-chmod +x start-postgres-docker.sh
-./start-postgres-docker.sh
-```
-
-Open:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-## Run Without Docker
-
-Windows:
-
-```powershell
-cd backend
-.\start-local-sqlite.ps1
-```
-
-macOS/Linux:
-
-```bash
-cd backend
-chmod +x start-local-sqlite.sh
-./start-local-sqlite.sh
-```
-
-## Run Frontend Handoff Pages
-
-```bash
-cd frontend-pages
-python -m http.server 3000
-```
-
-Open:
-
-```text
-http://127.0.0.1:3000/register.html
-```
-
-These pages are a handoff starter for the frontend team. Registration and login are separate pages: start at `register.html`, then the app opens `login.html` after account creation. The pages show expected screens, fields, and endpoint mappings without locking the team into a framework.
-
-## Main API Endpoints
-
-- `POST /auth/register`
-- `POST /auth/login`
-- `POST /auth/forgot-password`
-- `POST /auth/reset-password`
-- `GET /auth/me`
-- `GET /dashboard/summary`
-- `GET /dashboard/risk-summary`
-- `GET /profile`
-- `PUT /profile`
-- `POST /medications`
-- `GET /medications`
-- `GET /medications/{id}`
-- `PUT /medications/{id}`
-- `DELETE /medications/{id}`
-- `GET /medications/history`
-- `POST /scans/barcode`
-- `POST /scans/camera`
-- `POST /scans/upload`
-- `POST /scans/prescription-ocr`
-- `GET /scans`
-- `POST /supplements`
-- `GET /supplements`
-- `GET /supplements/{id}`
-- `PUT /supplements/{id}`
-- `DELETE /supplements/{id}`
-- `POST /substances`
-- `GET /substances`
-- `PUT /substances/{id}`
-- `DELETE /substances/{id}`
-- `POST /safety-check`
-- `GET /interactions/history`
-- `POST /ai/safety-checks`
-- `GET /ai/safety-checks/pending`
-- `GET /ai/safety-checks/{id}`
-- `PUT /ai/safety-checks/{id}/result`
-- `POST /reminders`
-- `GET /reminders/today`
-- `PUT /reminders/{id}`
-- `DELETE /reminders/{id}`
-- `POST /reminders/{id}/taken`
-- `POST /reminders/{id}/missed`
-- `GET /timeline/today`
-- `GET /adherence/summary`
-- `GET /refills/due`
-- `POST /side-effects`
-- `GET /side-effects`
-- `GET /side-effects/summary`
-- `POST /assistant/ask`
-- `GET /assistant/status`
-- `POST /share/report-link`
-- `GET /share/report/{token}`
-- `GET /reports/medication-summary`
-- `GET /emergency-card`
-- `POST /caregiver/invite`
-- `GET /caregiver/patients`
-- `GET /caregiver/patients/{id}/medications`
-- `GET /caregiver/patients/{id}/reminders`
-- `GET /caregiver/patients/{id}/missed-doses`
-- `GET /caregiver/patients/{id}/report`
-- `POST /integrations`
-- `GET /integrations`
-- `GET /localization/languages`
-
-All endpoints are also available under `/api/v1`.
-
-## Tests
-
-```bash
-cd backend
-python -m pip install -r requirements-dev.txt
-python -m pytest
-```
-
-## Prototype Limitations
-
-- The assistant can call the local `ai-pipeline/medguard_ai_pipeline.py` starter through `AI_PIPELINE_PATH` and `AI_PIPELINE_MODULE`. This is still rule-based until the AI team replaces it with a real model.
-- Interaction rules are seed examples for an MVP and are not a complete clinical database.
-- The share link is a temporary read-only report prototype.
-- Timeline and adherence use local server time for MVP scheduling.
-- MedGuard does not diagnose, prescribe, or replace medical advice from a doctor or pharmacist.
-
-## Team Notes
-
-- Backend owns user data, CRUD, safety rule checks, reminders, reports, and access control.
-- AI pipeline should call backend APIs instead of writing directly to the database.
-- Frontend should use the OpenAPI docs at `/docs` and the contract at `backend/docs/frontend-api-contract.md`.
-- Never commit `.env`, database files, virtual environments, API keys, or generated build folders.
+MedGuard helps users organize medication information, understand possible interaction risks, remember doses, and prepare clearer reports for healthcare professionals. It combines medication management, lifestyle tracking, safety warnings, reminders, reports, caregiver support, and future AI integration in one MVP-ready platform.
