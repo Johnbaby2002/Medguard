@@ -10,11 +10,16 @@ import RemindersPage from "../pages/RemindersPage";
 import ReportsPage from "../pages/ReportsPage";
 import SupplementsPage from "../pages/SupplementsPage";
 import SubstancesPage from "../pages/SubstancesPage";
+import RegisterPage from "../pages/RegisterPage";
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <LoginPage />,
   },
+  {
+  path: "/register",
+  element: <RegisterPage />,
+},
   {
     element: <Layout />,
     children: [

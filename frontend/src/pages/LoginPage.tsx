@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ShieldCheck, Activity, Pill } from "lucide-react";
 import { login } from "../api/auth";
+import { Link } from "react-router-dom";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -233,6 +234,15 @@ export default function LoginPage() {
           >
             {isLoading ? "Signing in..." : "Sign in"}
           </button>
+
+          <p
+            style={{
+              marginTop: 16,
+              textAlign: "center",
+            }}
+          >
+            <Link to="/register">Create account</Link>
+          </p>
 
           <div
             style={{
